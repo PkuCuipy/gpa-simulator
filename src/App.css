@@ -35,6 +35,29 @@
 }
 
 
+/* ------------------------------ 设置 ------------------------------ */
+#settings {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+}
+.settings-button {
+    background-color: #777;
+    color: #eee;
+    padding: 0.5rem;
+    margin: 0 0.5rem;
+    font-size: 0.9rem;
+    border-radius: 0.5rem;
+
+    display: inline-flex;
+    align-items: center;
+    user-select: none;
+}
+.settings-button:hover {
+    cursor: pointer;
+    opacity: 85%;
+}
 
 
 
