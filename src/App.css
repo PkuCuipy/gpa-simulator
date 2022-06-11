@@ -1,3 +1,9 @@
+:root {
+    --max-width: 750px;
+}
+
+
+
 /* ------------------------------ 顶栏 ------------------------------ */
 #title-bar {
     display: flex;
@@ -41,6 +47,7 @@
     align-items: center;
     justify-content: center;
     background-color: transparent;
+    padding: 0.3rem;
 }
 .settings-button {
     background-color: #777;
@@ -58,6 +65,46 @@
     cursor: pointer;
     opacity: 85%;
 }
+
+/* ------------------------------ 导入器 ------------------------------ */
+#import-prompt {
+    background-color: #ccc;
+    padding: 0.5rem 3%;
+    width: 90%;
+    max-width: var(--max-width);
+    margin: 0.5rem auto;    /* margin: auto 实现居中 */
+    border-radius: 1rem;
+}
+#import-prompt ul {
+    padding: 0 1rem;
+    margin: 0;
+}
+#paste-here {
+    background-color: #eee;
+    width: 90%;
+    height: 6rem;
+    margin: 0.5rem auto;        /* margin: auto 实现居中 */
+    border-radius: 0.5rem;
+    border: 3px solid #ddd;
+    padding: 0.5rem;
+    overflow: scroll;
+    color: #ccc;
+    font-size: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: var(--max-width);
+}
+#paste-here:empty:before {      /* 实现 placeholder 的一种方式 */
+    content: "粘贴到此处";
+}
+
+
+
+
+
+
+
 
 
 
