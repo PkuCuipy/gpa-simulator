@@ -1,12 +1,13 @@
-
+/* ------------------------------ 顶栏 ------------------------------ */
 #title-bar {
-    font-size: 1.2rem;
     display: flex;
     align-items: center;
     justify-content: center;
+
+    font-size: 1.2rem;
     height: 3rem;
-    background-color: #eee;
     white-space: nowrap;
+    background-color: #eee;
 }
 #title-bar::before,
 #title-bar::after {
@@ -16,6 +17,21 @@
     background-color: black;
     overflow: hidden;
     margin: 2rem;
+}
+
+/* ------------------------------ 底栏 ------------------------------ */
+#bottom-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: column;
+
+    font-size: 0.8rem;
+    height: 3rem;
+    white-space: nowrap;
+
+    color: #eee;
+    background-color: #333;
 }
 
 
