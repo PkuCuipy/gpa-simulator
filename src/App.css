@@ -2,8 +2,6 @@
     --max-width: 750px;
 }
 
-
-
 /* ------------------------------ 顶栏 ------------------------------ */
 #title-bar {
     display: flex;
@@ -104,10 +102,15 @@
 .course-row,
 .semester-row {
     background-color: #eff;
-    border: 1px solid blue;
+    border-bottom: 1px solid #ccc;
     display: flex;
     flex-direction: row;
     padding: 0.2rem;
+}
+.rows {
+    box-shadow: 0 0 0.4rem #000c;
+    width: 90%;
+    margin: auto;
 }
 /* -------------- 左部 -------------- */
 .course-row .left,
@@ -148,17 +151,32 @@
 .semester-row .right .down {font-size: 0.7rem; white-space: nowrap}
 
 /* -------------- 额外调整 -------------- */
-.course-row {
-    width: 90%;
-    margin: auto;
-}
 .semester-chunk {
     max-width: var(--max-width);
     margin: auto;
     margin-bottom: 3rem;
 }
+.course-row .right .up {        /* 可编辑的元素 */
+    width: 2.5rem;
+    text-align: center;
+    border: 2px solid transparent;
+}
+.course-row .right .up:hover {
+    cursor: text;
+    border: 2px solid #777;
+    border-radius: 3px;
+    box-sizing: content-box;
+}
+.semester-row {
+    position: sticky;
+    top: 0;
+    z-index: 233;
+    box-shadow: 0 0 0.4rem #000c;
+}
 
-
+.course-row .down {display: none;}
+.semester-chunk {margin-bottom: 3rem;}
+.course-row, .semester-row {padding: 0.1rem;}
 
 
 

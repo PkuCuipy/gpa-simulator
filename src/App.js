@@ -116,7 +116,9 @@ function SemesterChunk(props) {
         total_credits,
         avg_gpa,
       }}/>
-      {course_infos.map(info => <CourseRow courseInfo={info} key={info.name}/>)}
+      <div class={"rows"}>
+        {course_infos.map(info => <CourseRow courseInfo={info} key={info.name}/>)}
+      </div>
     </div>
   );
 }
@@ -160,6 +162,7 @@ function CourseRow(props) {
 }
 
 
+/* ------------------------------ 总结 ------------------------------ */
 function Summary(props) {
   return (
     /* TODO */
