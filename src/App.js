@@ -8,9 +8,12 @@ import {
   seemsByToken, seemsByPageCopy,
   fetchCourseInfoAll, parseCourseInfoAll,
   calcAvgGPA,
-  score2gpa, score2gpa_printable
+  score2gpa_printable,
+  gpa2score_printable,
 } from "./util.js";
 
+
+/* ------------------------------ 顶栏 ------------------------------ */
 function TitleBar() {
   return (
     <div id={"title-bar"}>
@@ -19,6 +22,7 @@ function TitleBar() {
   );
 }
 
+/* ------------------------------ 底栏 ------------------------------ */
 function BottomBar() {
   return (
     <div id={"bottom-bar"}>
@@ -26,6 +30,17 @@ function BottomBar() {
       <div> ️⚠︎ 本页面结果仅供参考, 请以学校官方结果为准! </div>
     </div>
   );
+}
+
+/* ------------------------------ 设置 ------------------------------ */
+function Settings(props) {
+  return (
+    <div id={"settings"}>
+      <Button name={"重新导入"} icon={import_icon} onClick={props.onClickImport}/>
+      <Button name={"隐藏/显示编辑警告"} icon={warning_icon} onClick={props.onToggleEditedWarning}/>
+      <Button name={"添加课程"} icon={add_icon} onClick={props.onNewCourse}/>
+    </div>
+  )
 }
 
 function Button(props) {
@@ -37,16 +52,7 @@ function Button(props) {
   )
 }
 
-function Settings(props) {
-  return (
-    <div id={"settings"}>
-      <Button name={"重新导入"} icon={import_icon} onClick={props.onClickImport}/>
-      <Button name={"隐藏/显示编辑警告"} icon={warning_icon} onClick={props.onToggleEditedWarning}/>
-      <Button name={"添加课程"} icon={add_icon} onClick={props.onNewCourse}/>
-    </div>
-  )
-}
-
+/* ------------------------------ 导入器 ------------------------------ */
 function Importer(props) {
   return (
     <div id={"importer"}>
@@ -63,46 +69,93 @@ function Importer(props) {
   );
 }
 
+/* ------------------------------ 成绩单 ------------------------------ */
+function GradeBook(props) {
 
-function CourseRow(props) {
-  return <div className={"course-row"}>
+  // 把所有课程根据 semester 分组
+  const semester_names = [...new Set(props.courseInfos.map(info => info.semester.join("-")))].sort();
+  const semester_infos = semester_names.map(sem_name => ({
+    semester: sem_name.split("-"),
+    course_infos: props.courseInfos.filter(info => info.semester.join("-") === sem_name),
+  }));
+  // console.log(semester_names);
+  // console.log(semesters);
 
-    <span className={"left"}>
-      <span className={"up"}> {props.courseInfo.credit} </span>
-      <span className={"down"}> 学分 </span>
-    </span>
+  return (
+    <>
+      <h2> This is Grade Book</h2>
+      <div id={"grade-book"}>
+        {semester_infos.map(info =>
+          <SemesterChunk
+            courseInfos={info.course_infos}
+            semester={info.semester}
+            key={info.semester}
+          />
+        )}
+      </div>
+    </>
+  );
+}
 
-    <span className={"middle"}>
-      <span className={"up"}> {props.courseInfo.name} </span>
-      <span className={"down"}> {props.courseInfo.teacher} </span>
-    </span>
+function SemesterChunk(props) {
+  console.assert(props.courseInfos.length !== 0, "不允许存在不包含课程的学期!");
 
-    <span className={"right"}>
-      <span className={"up"}> {props.courseInfo.score} </span>
-      <span className={"down"}> {score2gpa_printable(props.courseInfo.score)} </span>
-    </span>
+  // 计算 <SemesterRow> 所需的信息
+  const course_infos = props.courseInfos.slice().sort();    // 分属于这个 Semester 的所有课程信息. 注意 React 禁止修改 props, 所以需要 .slice() 复制一份先.
+  const semester_name = `${props.semester[0]}学年 第${props.semester[1]}学期`;
+  const num_courses = course_infos.length;
+  const total_credits = course_infos.map(d=>d.credit).reduce((a, b) => a + b, 0);
+  const avg_gpa = calcAvgGPA(course_infos);
 
-  </div>
+  // 渲染一个 <SemesterRow> + 若干个 <CourseRow>
+  return (
+    <div className={"semester-chunk"}>
+      <SemesterRow semesterInfo={{
+        semester_name,
+        num_courses,
+        total_credits,
+        avg_gpa,
+      }}/>
+      {course_infos.map(info => <CourseRow courseInfo={info} key={info.name}/>)}
+    </div>
+  );
 }
 
 function SemesterRow(props) {
-  return <div className={"semester-row"}>
-    <span> {props.semesterInfo.total_credit} </span> <span> 学分 </span>
-    <span> {props.semesterInfo.semester_name} </span>
-    <span> 共 {props.semesterInfo.num_courses} 门课程 </span>
-    <span> {props.semesterInfo.avg_score} </span>
-    <span> {score2gpa(props.semesterInfo.avg_score).toFixed(3)} </span>
-  </div>
+  return (
+    <div className={"semester-row"}>
+      <span className={"left"}>
+        <span className={"up"}> {props.semesterInfo.total_credits} </span>
+        <span className={"down"}> 学分 </span>
+      </span>
+      <span className={"middle"}>
+        <span className={"up"}> {props.semesterInfo.semester_name} </span>
+        <span className={"down"}> 共 {props.semesterInfo.num_courses} 门课程 </span>
+      </span>
+      <span className={"right"}>
+        <span className={"up"}> {props.semesterInfo.avg_gpa.toFixed(3)} </span>
+        <span className={"down"}> 折合 {gpa2score_printable(props.semesterInfo.avg_gpa)} </span>
+    </span>
+    </div>
+  );
 }
 
-
-function GradeBook(props) {
+function CourseRow(props) {
   return (
-    /* TODO */
-    <>
-      <h2> This is Grade Book</h2>
-      { props.courseInfos.map(d => <CourseRow courseInfo={d} key={d.name}/>) }
-    </>
+    <div className={"course-row"}>
+      <span className={"left"}>
+        <span className={"up"}> {props.courseInfo.credit} </span>
+        <span className={"down"}> 学分 </span>
+      </span>
+      <span className={"middle"}>
+        <span className={"up"}> {props.courseInfo.name} </span>
+        <span className={"down"}> {props.courseInfo.teacher} </span>
+      </span>
+      <span className={"right"}>
+        <span className={"up"}> {props.courseInfo.score} </span>
+        <span className={"down"}> {score2gpa_printable(props.courseInfo.score)} </span>
+      </span>
+    </div>
   );
 }
 

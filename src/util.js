@@ -54,6 +54,9 @@ function parseCourseInfoAll(DOMElem) {
   for (let block of semester_blocks.slice(0, -1)) {   /* 最后一项是 "总绩点", 不是一个 "学期", 因此丢掉 */
     // console.log(block);
     let semester_name = getDOMChild(block, [0,0,1,0,0,0]).innerText;
+    if (semester_name === "新增成绩") {
+      continue;   // 防止用户输入中有 "新增成绩" 尚未 "已阅"
+    }
     let course_rows = block.getElementsByClassName("course-row");
     for (let row of course_rows) {
       // console.log(row);
@@ -78,7 +81,7 @@ function parseCourseInfoAll(DOMElem) {
       course_infos.push(course_info);
     }
   }
-  // 防止用户输入中有 "新增成绩" 尚未 "已阅"
+
   course_infos = course_infos.filter(info => info.semester !== "新增成绩");
   return course_infos;
 }
@@ -105,16 +108,26 @@ function calcAvgGPA(course_infos) {
         GPATotal += GPA * credit;
         creditTotal += credit;
       }
+      else {
+        /* 按照 PKU-Helper 的计算规则, 不及格的课程不参与计算 */
+      }
     }
   }
   return GPATotal / creditTotal;  // 加权平均
 }
 
+
 function score2gpa(score) {
+  console.assert(60 <= score && score <= 100, `成绩 ${score} 无法进行 GPA 计算`);
   return 4 - 3 * (100 - score) ** 2 / 1600;
 }
 
-function score2gpa_printable(score) {
+function gpa2score(gpa) {
+  console.assert(0 <= gpa && gpa <= 100, `GPA ${gpa} 无法进行分数折合!`);
+  return 100 - Math.sqrt((6400 - 1600 * gpa) / 3);
+}
+
+function score2gpa_printable(score: String) {
   if (score === "P") { return "通过"}
   else if (score === "F") { return "未通过"}
   else if (score === "W") { return "退课"}
@@ -124,12 +137,16 @@ function score2gpa_printable(score) {
   else { return score2gpa(Number(score)).toFixed(3);}
 }
 
+function gpa2score_printable(gpa) {
+  return gpa2score(Number(gpa)).toFixed(1);
+}
+
 export {
   fetchCourseInfoAll,
   seemsByToken,
   seemsByPageCopy,
   parseCourseInfoAll,
-  score2gpa,
   calcAvgGPA,
-  score2gpa_printable,
+  score2gpa, score2gpa_printable,
+  gpa2score, gpa2score_printable,
 }

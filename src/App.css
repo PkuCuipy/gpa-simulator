@@ -101,45 +101,62 @@
 
 
 /* ------------------------------ 成绩单 ------------------------------ */
-.course-row {
+.course-row,
+.semester-row {
     background-color: #eff;
     border: 1px solid blue;
     display: flex;
     flex-direction: row;
     padding: 0.2rem;
 }
-
-.course-row .left {
+/* -------------- 左部 -------------- */
+.course-row .left,
+.semester-row .left {
     display: flex;
     flex-direction: column;
-    width: 3rem;
+    width: 2rem;
+    margin-right: 0.3rem;
     align-items: center;
     justify-content: center;
 }
-.course-row .left .up {font-size: 1.2rem;}
-.course-row .left .down {font-size: 0.7rem;}
+.course-row .left .up, .semester-row .left .up {font-size: 1.2rem;}
+.course-row .left .down, .semester-row .left .down {font-size: 0.7rem;}
 
-
-.course-row .middle {
+/* -------------- 中部 -------------- */
+.course-row .middle,
+.semester-row .middle {
     display: flex;
     flex-grow: 1;       /* 由中间的元素 ｢撑满剩余区域｣ ! */
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
 }
-.course-row .middle .up {font-size: 1.2rem;}
-.course-row .middle .down {font-size: 0.7rem;}
+.course-row .middle .up, .semester-row .middle .up {font-size: 1.2rem;}
+.course-row .middle .down, .semester-row .middle .down {font-size: 0.7rem;}
 
-
-.course-row .right {
+/* -------------- 右部 -------------- */
+.course-row .right,
+.semester-row .right {
     display: flex;
     flex-direction: column;
     width: 3.5rem;
     align-items: center;
     justify-content: center;
 }
-.course-row .right .up {font-size: 1.2rem;}
-.course-row .right .down {font-size: 0.7rem;}
+.course-row .right .up, .semester-row .right .up {font-size: 1.2rem;}
+.course-row .right .down,
+.semester-row .right .down {font-size: 0.7rem; white-space: nowrap}
+
+/* -------------- 额外调整 -------------- */
+.course-row {
+    width: 90%;
+    margin: auto;
+}
+.semester-chunk {
+    max-width: var(--max-width);
+    margin: auto;
+    margin-bottom: 3rem;
+}
 
 
 
