@@ -3,6 +3,7 @@ import { Component } from "react";
 import import_icon from "./icons/import.svg";
 import warning_icon from "./icons/warning.svg";
 import add_icon from "./icons/add.svg";
+import COURSE_INFOS_DEV from "./cuipy-course-info-for-dev.json"
 import {
   seemsByToken, seemsByPageCopy,
   fetchCourseInfoAll, parseCourseInfoAll,
@@ -97,6 +98,23 @@ class App extends Component{
       ignore_edited_warning: false,
     }
     this.course_infos = null;
+
+    /* 为了防止开发阶段大量访问 Helper-API 被查水表... */
+    this.state.need_initial_import = false;
+    this.course_infos = COURSE_INFOS_DEV;
+  }
+
+  componentDidMount() {
+    // 如果检测到 localStorage 中有 user_token, 则按照这个加载数据
+    const local_saved_token = localStorage.getItem("user_token");
+    if (local_saved_token !== null) {
+      localStorage.removeItem("user_token");
+      fetchCourseInfoAll(local_saved_token, (infos) => {
+        this.course_infos = infos;
+        this.setState({need_initial_import: false});
+        localStorage.setItem("user_token", local_saved_token);
+      });
+    }
   }
 
   /* 清空 ｢粘贴区域｣ 中的内容 */
@@ -129,11 +147,13 @@ class App extends Component{
     let elem = evt.target;              // 这个理应就是 #paste-here
                                         // 判断 ｢导入方式｣
     if (seemsByToken(elem)) {           // 1. 粘贴的是 ｢token｣ 类似物
-      fetchCourseInfoAll(elem.innerText, (infos) => {
+      const token = elem.innerText;
+      fetchCourseInfoAll(token, (infos) => {
         console.log("infos:", infos);
         console.log("gpa:", calcAvgGPA(infos));
         this.course_infos = infos;
         this.setState({need_initial_import: false});
+        localStorage.setItem("user_token", token);     // 存储用户的 token, 下次如果检测到 localStorage 中有, 就不必再向用户询问
       });
     }
     else if (seemsByPageCopy(elem)) {   // 2. 粘贴的是 ｢成绩查询页面｣ 类似物
