@@ -64,23 +64,26 @@ function Importer(props) {
 }
 
 
-class GradeBook extends Component {
-  render() {
-    return (
-      /* TODO */
-      <div> This is Grade Book </div>
-    );
-  }
+function GradeBook(props) {
+  return (
+    /* TODO */
+    <>
+      <h2> This is Grade Book</h2>
+      <div> {JSON.stringify(props.courseInfos)} </div>
+    </>
+  );
 }
 
 
-class Summary extends Component {
-  render() {
-    return (
-      /* TODO */
-      <div> This is Summary  </div>
-    );
-  }
+function Summary(props) {
+  return (
+    /* TODO */
+    <>
+      <h2> This is Summary </h2>
+      <div> {JSON.stringify(props.courseInfos)} </div>
+    </>
+
+  );
 }
 
 
@@ -93,8 +96,8 @@ class App extends Component{
       need_initial_import: true,
       ignore_edited_warning: false,
     }
+    this.course_infos = null;
   }
-
 
   /* 清空 ｢粘贴区域｣ 中的内容 */
   clearPasteArea = () => {
@@ -123,16 +126,22 @@ class App extends Component{
   /* 当用户向 ｢粘贴区域｣ 粘贴时的行为 */
   handlePaste = (evt) => {
     console.log("用户粘贴了一些东西, 来看看能不能解析?");
-    let elem = evt.target;    // 这个理应就是 #paste-here
-    // 判断 ｢导入方式｣
-    if (seemsByToken(elem)) {   // 粘贴的是 ｢token｣ 类似物
-      /* TODO */
-      fetchCourseInfoAll(elem.innerText);
+    let elem = evt.target;              // 这个理应就是 #paste-here
+                                        // 判断 ｢导入方式｣
+    if (seemsByToken(elem)) {           // 1. 粘贴的是 ｢token｣ 类似物
+      fetchCourseInfoAll(elem.innerText, (infos) => {
+        console.log("infos:", infos);
+        console.log("gpa:", calcAvgGPA(infos));
+        this.course_infos = infos;
+        this.setState({need_initial_import: false});
+      });
     }
-    else if (seemsByPageCopy(elem)) {   // 粘贴的是 ｢成绩查询页面｣ 类似物
+    else if (seemsByPageCopy(elem)) {   // 2. 粘贴的是 ｢成绩查询页面｣ 类似物
       let infos = parseCourseInfoAll(elem);
       console.log("infos:", infos);
       console.log("gpa:", calcAvgGPA(infos));
+      this.course_infos = infos;
+      this.setState({need_initial_import: false});
     }
     else {
       console.log("无法识别您粘贴的内容w 请仔细阅读说明后重试🥺")
@@ -153,7 +162,10 @@ class App extends Component{
         />
         {this.state.need_initial_import
           ? <Importer onPaste={this.handlePaste}/>
-          : <><GradeBook/><Summary/></>}
+          : <>
+            <GradeBook courseInfos={this.course_infos}/>
+            <Summary courseInfos={this.course_infos}/>
+          </>}
         <BottomBar/>
       </>
     );
