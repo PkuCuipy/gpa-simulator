@@ -1,3 +1,10 @@
+export const nextUniqueId = (() => {
+  let id = 0;
+  return () => {
+    return id++;
+  }
+})();
+
 export function seemsByToken(elem) {
   return elem.innerText.match(/^[a-z0-9]{32}$/);
 }
@@ -15,15 +22,20 @@ export function normalize_score_from_isop(score) {
   else return score;
 }
 
+export function isValidScore(score: String) {
+  return ((new Set(["P", "F", "W", "NP", "I", "EX"])).has(score) || (score !== "" && Number.isInteger(Number(score)) && Number(score) >= 0 && Number(score) <= 100));
+}
+
 export function fetchCourseInfoAll(token, callback) {
   // 用 token 构造 url 去请求数据, 然后解析出所需的所有课程信息, 最后喂给 callback 函数.
   const req = new XMLHttpRequest();
   req.open("GET", `https://pkuhelper.pku.edu.cn/api_xmcp/isop/scores?user_token=${token}&auto=no`);
   req.onload = function() {
     const response_json = JSON.parse(this.response);
-    console.log(response_json);
+    // console.log(response_json);
     const course_infos = response_json.cjxx.map(info => ({
       is_user_created: false,
+      unique_id: nextUniqueId(),
       name: info.kcmc,                                                    // 课程名称
       semester: [Number(info.xnd.match(/^(\d+)-/)[1]), Number(info.xq)],  // 学期
       credit: Number(info.xf),                                            // 学分
@@ -134,6 +146,7 @@ export function score2gpa_printable(score: String) {
   else if (score === "NP") { return "未通过"}
   else if (score === "I") { return "缓考"}
   else if (score === "EX") { return "免修"}
+  else if (Number(score) < 60) { return "-" }
   else { return score2gpa(Number(score)).toFixed(3);}
 }
 

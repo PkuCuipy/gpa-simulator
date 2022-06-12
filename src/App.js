@@ -1,13 +1,12 @@
 import "./App.css";
 import { Component } from "react";
 import import_icon from "./icons/import.svg";
-import warning_icon from "./icons/warning.svg";
 import add_icon from "./icons/add.svg";
 import COURSE_INFOS_DEV from "./cuipy-course-info-for-dev.json";
 import {
   calcAvgGPA, coursesGroupBySemester,
   fetchCourseInfoAll, gpa2score,
-  gpa2score_printable,
+  gpa2score_printable, isValidScore, nextUniqueId,
   parseCourseInfoAll,
   score2gpa_printable,
   seemsByPageCopy,
@@ -82,6 +81,7 @@ function GradeBook(props) {
           <SemesterChunk
             courseInfos={info.course_infos}
             semesterName={`${info.semester[0]}学年 第${info.semester[1]}学期`}
+            changeScoreOfCourse={props.changeScoreOfCourse}
             key={info.semester}
           />
         )}
@@ -93,10 +93,17 @@ function SemesterChunk(props) {
   console.assert(props.courseInfos.length !== 0, "不允许存在不包含课程的学期!");
 
   // 计算 <SemesterRow> 所需的信息
-  const course_infos = props.courseInfos.slice().sort((a, b) => b.score - a.score);    // 分属于这个 Semester 的所有课程信息. 注意 React 禁止修改 props, 所以需要 .slice() 复制一份先.
+  const course_infos = props.courseInfos.slice().sort((a, b) => {
+    let va = isNaN(Number(a.score)) ? -1 : Number(a.score);
+    let vb = isNaN(Number(b.score)) ? -1 : Number(b.score);
+    console.log(a, b);
+    console.log(va, vb);
+    return vb - va;
+  });    // 分属于这个 Semester 的所有课程信息. 注意 React 禁止修改 props, 所以需要 .slice() 复制一份先.
+  console.log(course_infos);
   const num_courses = course_infos.length;
   const total_credits = course_infos
-    .filter(d=>d.score !== "W" && d.score !== "F" && d.score !== "NP")
+    .filter(d=>d.score !== "W" && d.score !== "F" && d.score !== "NP" && (isNaN(Number(d.score)) || Number(d.score) >= 60))
     .map(d=>d.credit)
     .reduce((a, b) => a + b, 0);
   const avg_gpa = calcAvgGPA(course_infos);
@@ -111,7 +118,9 @@ function SemesterChunk(props) {
         avg_gpa,
       }}/>
       <div className={"rows"}>
-        {course_infos.map(info => <CourseRow courseInfo={info} key={info.name + info.created_timestamp}/>)}
+        {course_infos.map(info => <CourseRow courseInfo={info}
+                                             changeScoreOfCourse={props.changeScoreOfCourse}
+                                             key={info.unique_id}/>)}
       </div>
     </div>
   );
@@ -158,7 +167,22 @@ function CourseRow(props) {
         <span className={"down"}> {props.courseInfo.teacher} </span>
       </span>
       <span className={"right"}>
-        <span className={"up"}> {props.courseInfo.score} </span>
+        <span
+          className={"up"}
+          contentEditable={"true"}
+          suppressContentEditableWarning={true}
+          onBlur={
+            (event) => {    /* 注意这里得用 onBlur 而不是 onFocusout! */
+              let new_score = event.target.innerText;
+              if (isValidScore(new_score)) {
+                props.changeScoreOfCourse(props.courseInfo.unique_id, new_score);
+              }
+              else {
+                event.target.innerText = props.courseInfo.edited_score;
+              }
+            }
+          }
+        > {props.courseInfo.score} </span>
         <span className={"down"}> {score2gpa_printable(props.courseInfo.score)} </span>
       </span>
     </div>
@@ -171,7 +195,7 @@ function Summary(props) {
 
   // 计算 ｢总绩点｣、｢总学分数｣ 和 ｢总课程数｣ (退课、挂科的不算在内!)
   const total_credits = props.courseInfos
-    .filter(d=>d.score !== "W" && d.score !== "F" && d.score !== "NP")
+    .filter(d=>d.score !== "W" && d.score !== "F" && d.score !== "NP" && (isNaN(Number(d.score)) || Number(d.score) >= 60))
     .map(d=>d.credit)
     .reduce((a, b) => a + b, 0);
   const num_courses = props.courseInfos.length;
@@ -201,7 +225,6 @@ function Summary(props) {
         semester_name: "总绩点",
       }}/>
       <div>
-        {/*TODO: 这里再画个折线图?*/}
         <table id={"summary-table"}>
           <thead>
             <tr><th>学期</th><th>当期绩点</th><th>累计绩点</th></tr>
@@ -243,13 +266,13 @@ function AddCourseModal(props) {
           const is_which_valid = which => (Number.isInteger(Number(which)) && Number(which) >= 1 && Number(which) <= 3);
           const is_name_valid = name => (name.length > 0);
           const is_credit_valid = credit => (Number.isInteger(Number(credit)) && Number(credit) >= 1);
-          const is_score_valid = score => ((new Set(["P", "F", "W", "NP", "I", "EX"])).has(score) || (Number.isInteger(Number(score)) && Number(score) >= 0 && Number(score) <= 100));
+          const is_score_valid = isValidScore;
           // 如果合法, 则添加课程, 并关闭提示框
           if (is_year_valid(year) && is_which_valid(which) && is_name_valid(name) && is_credit_valid(credit) && is_score_valid(score)) {
             document.getElementById("add-course-error-msg").innerText = "";
             props.addCourse({
               is_user_created: true,
-              created_timestamp: Date.now(),
+              unique_id: nextUniqueId(),
               name,
               semester: [Number(year), Number(which)],
               credit: Number(credit),
@@ -283,9 +306,9 @@ class App extends Component{
       course_infos: null,
     }
 
-    /* 为了防止开发阶段大量访问 Helper-API 被查水表... */
-    this.state.need_initial_import = false;
-    this.state.course_infos = COURSE_INFOS_DEV;
+    // /* 为了防止开发阶段大量访问 Helper-API 被查水表... */
+    // this.state.need_initial_import = false;
+    // this.state.course_infos = COURSE_INFOS_DEV;
   }
 
 
@@ -371,6 +394,16 @@ class App extends Component{
     console.log("用户粘贴的内容已清空~");
   }
 
+  /* 把 unique_id 为 ui 的 course 的成绩设置为 new_score */
+  changeScoreOfCourse = (ui, new_score) => {
+    let infos =  this.state.course_infos;
+    let that_info = infos.filter(i => i.unique_id === ui)[0];
+    that_info.score = new_score;
+    this.setState({
+      course_infos: [that_info, ...infos.filter(i => i.unique_id !== ui)],
+    });
+  }
+
   render() {
     return (
       <>
@@ -386,7 +419,8 @@ class App extends Component{
         {this.state.need_initial_import
           ? <Importer onPaste={this.handlePaste}/>
           : <>
-            <GradeBook courseInfos={this.state.course_infos}/>
+            <GradeBook courseInfos={this.state.course_infos}
+                       changeScoreOfCourse={this.changeScoreOfCourse}/>
             <Summary courseInfos={this.state.course_infos}/>
           </>}
         <BottomBar/>
