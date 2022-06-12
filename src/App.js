@@ -11,6 +11,7 @@ import {
   score2gpa_printable,
   gpa2score_printable,
 } from "./util.js";
+import { score2hsl, score2proportion } from "./style";
 
 
 /* ------------------------------ 顶栏 ------------------------------ */
@@ -83,7 +84,6 @@ function GradeBook(props) {
 
   return (
     <>
-      <h2> This is Grade Book</h2>
       <div id={"grade-book"}>
         {semester_infos.map(info =>
           <SemesterChunk
@@ -101,7 +101,7 @@ function SemesterChunk(props) {
   console.assert(props.courseInfos.length !== 0, "不允许存在不包含课程的学期!");
 
   // 计算 <SemesterRow> 所需的信息
-  const course_infos = props.courseInfos.slice().sort();    // 分属于这个 Semester 的所有课程信息. 注意 React 禁止修改 props, 所以需要 .slice() 复制一份先.
+  const course_infos = props.courseInfos.slice().sort((a, b) => b.score - a.score);    // 分属于这个 Semester 的所有课程信息. 注意 React 禁止修改 props, 所以需要 .slice() 复制一份先.
   const semester_name = `${props.semester[0]}学年 第${props.semester[1]}学期`;
   const num_courses = course_infos.length;
   const total_credits = course_infos.map(d=>d.credit).reduce((a, b) => a + b, 0);
@@ -136,15 +136,25 @@ function SemesterRow(props) {
       </span>
       <span className={"right"}>
         <span className={"up"}> {props.semesterInfo.avg_gpa.toFixed(3)} </span>
-        <span className={"down"}> 折合 {gpa2score_printable(props.semesterInfo.avg_gpa)} </span>
+        <span className={"down"}> (折合 {gpa2score_printable(props.semesterInfo.avg_gpa)}) </span>
     </span>
     </div>
   );
 }
 
 function CourseRow(props) {
+  // 计算颜色
+  let {h, s, l} = score2hsl(props.courseInfo.score);
+  let p = score2proportion(props.courseInfo.score);
+
   return (
-    <div className={"course-row"}>
+    <div className={"course-row"} style={{
+      // background: `linear-gradient(to right, rgb(255, 242, 128) 0%, rgb(255, 240, 102) 45%, rgb(219, 209, 112) 45%)`
+      background: `linear-gradient(to right, 
+                                    hsl(${h}, ${s}%, ${l}%) 0%, 
+                                    hsl(${h}, ${s}%, ${l}%) ${p}%, 
+                                    hsl(${h}, ${s * 0.8}%, ${l * 1.1}%) ${p}%)`
+    }}>
       <span className={"left"}>
         <span className={"up"}> {props.courseInfo.credit} </span>
         <span className={"down"}> 学分 </span>

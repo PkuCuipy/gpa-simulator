@@ -46,6 +46,7 @@
     justify-content: center;
     background-color: transparent;
     padding: 0.3rem;
+    margin: 1rem;
 }
 .settings-button {
     background-color: #777;
@@ -70,7 +71,7 @@
     padding: 0.5rem 3%;
     width: 90%;
     max-width: var(--max-width);
-    margin: 0.5rem auto;    /* margin: auto 实现居中 */
+    margin: 1.5rem auto;    /* margin: auto 实现居中 */
     border-radius: 1rem;
 }
 #import-prompt ul {
@@ -80,8 +81,8 @@
 #paste-here {
     background-color: #eee;
     width: 90%;
-    height: 6rem;
-    margin: 0.5rem auto;        /* margin: auto 实现居中 */
+    height: 18rem;
+    margin: 1.5rem auto;        /* margin: auto 实现居中 */
     border-radius: 0.5rem;
     border: 3px solid #ddd;
     padding: 0.5rem;
@@ -99,6 +100,9 @@
 
 
 /* ------------------------------ 成绩单 ------------------------------ */
+#grade-book {
+    margin-top: 1rem;
+}
 .course-row,
 .semester-row {
     background-color: #eff;
@@ -174,9 +178,9 @@
     box-shadow: 0 0 0.4rem #000c;
 }
 
-.course-row .down {display: none;}
-.semester-chunk {margin-bottom: 3rem;}
-.course-row, .semester-row {padding: 0.1rem;}
+/*.course-row .down {display: none;}*/
+/*.semester-chunk {margin-bottom: 3rem;}*/
+/*.course-row, .semester-row {padding: 0.1rem;}*/
 
 
 
