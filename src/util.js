@@ -114,6 +114,16 @@ function score2gpa(score) {
   return 4 - 3 * (100 - score) ** 2 / 1600;
 }
 
+function score2gpa_printable(score) {
+  if (score === "P") { return "通过"}
+  else if (score === "F") { return "未通过"}
+  else if (score === "W") { return "退课"}
+  else if (score === "NP") { return "未通过"}
+  else if (score === "I") { return "缓考"}
+  else if (score === "EX") { return "免修"}
+  else { return score2gpa(Number(score)).toFixed(3);}
+}
+
 export {
   fetchCourseInfoAll,
   seemsByToken,
@@ -121,4 +131,5 @@ export {
   parseCourseInfoAll,
   score2gpa,
   calcAvgGPA,
+  score2gpa_printable,
 }

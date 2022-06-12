@@ -8,6 +8,7 @@ import {
   seemsByToken, seemsByPageCopy,
   fetchCourseInfoAll, parseCourseInfoAll,
   calcAvgGPA,
+  score2gpa, score2gpa_printable
 } from "./util.js";
 
 function TitleBar() {
@@ -36,7 +37,6 @@ function Button(props) {
   )
 }
 
-
 function Settings(props) {
   return (
     <div id={"settings"}>
@@ -46,7 +46,6 @@ function Settings(props) {
     </div>
   )
 }
-
 
 function Importer(props) {
   return (
@@ -65,12 +64,44 @@ function Importer(props) {
 }
 
 
+function CourseRow(props) {
+  return <div className={"course-row"}>
+
+    <span className={"left"}>
+      <span className={"up"}> {props.courseInfo.credit} </span>
+      <span className={"down"}> 学分 </span>
+    </span>
+
+    <span className={"middle"}>
+      <span className={"up"}> {props.courseInfo.name} </span>
+      <span className={"down"}> {props.courseInfo.teacher} </span>
+    </span>
+
+    <span className={"right"}>
+      <span className={"up"}> {props.courseInfo.score} </span>
+      <span className={"down"}> {score2gpa_printable(props.courseInfo.score)} </span>
+    </span>
+
+  </div>
+}
+
+function SemesterRow(props) {
+  return <div className={"semester-row"}>
+    <span> {props.semesterInfo.total_credit} </span> <span> 学分 </span>
+    <span> {props.semesterInfo.semester_name} </span>
+    <span> 共 {props.semesterInfo.num_courses} 门课程 </span>
+    <span> {props.semesterInfo.avg_score} </span>
+    <span> {score2gpa(props.semesterInfo.avg_score).toFixed(3)} </span>
+  </div>
+}
+
+
 function GradeBook(props) {
   return (
     /* TODO */
     <>
       <h2> This is Grade Book</h2>
-      <div> {JSON.stringify(props.courseInfos)} </div>
+      { props.courseInfos.map(d => <CourseRow courseInfo={d} key={d.name}/>) }
     </>
   );
 }
