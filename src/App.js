@@ -3,15 +3,17 @@ import { Component } from "react";
 import import_icon from "./icons/import.svg";
 import warning_icon from "./icons/warning.svg";
 import add_icon from "./icons/add.svg";
-import COURSE_INFOS_DEV from "./cuipy-course-info-for-dev.json"
+import COURSE_INFOS_DEV from "./cuipy-course-info-for-dev.json";
 import {
-  seemsByToken, seemsByPageCopy,
-  fetchCourseInfoAll, parseCourseInfoAll,
-  calcAvgGPA,
-  score2gpa_printable,
+  calcAvgGPA, coursesGroupBySemester,
+  fetchCourseInfoAll, gpa2score,
   gpa2score_printable,
+  parseCourseInfoAll,
+  score2gpa_printable,
+  seemsByPageCopy,
+  seemsByToken,
 } from "./util.js";
-import { score2hsl, score2proportion } from "./style";
+import { hsl2hslprintable, score2hsl, score2proportion } from "./style";
 
 
 /* ------------------------------ 顶栏 ------------------------------ */
@@ -72,28 +74,19 @@ function Importer(props) {
 
 /* ------------------------------ 成绩单 ------------------------------ */
 function GradeBook(props) {
-
-  // 把所有课程根据 semester 分组
-  const semester_names = [...new Set(props.courseInfos.map(info => info.semester.join("-")))].sort();
-  const semester_infos = semester_names.map(sem_name => ({
-    semester: sem_name.split("-"),
-    course_infos: props.courseInfos.filter(info => info.semester.join("-") === sem_name),
-  }));
-  // console.log(semester_names);
-  // console.log(semesters);
-
+  // Grouped by ｢学期名｣
+  const semester_infos = coursesGroupBySemester(props.courseInfos);
+  // console.log(semester_infos);
   return (
-    <>
       <div id={"grade-book"}>
         {semester_infos.map(info =>
           <SemesterChunk
             courseInfos={info.course_infos}
-            semester={info.semester}
+            semesterName={`${info.semester[0]}学年 第${info.semester[1]}学期`}
             key={info.semester}
           />
         )}
       </div>
-    </>
   );
 }
 
@@ -102,21 +95,23 @@ function SemesterChunk(props) {
 
   // 计算 <SemesterRow> 所需的信息
   const course_infos = props.courseInfos.slice().sort((a, b) => b.score - a.score);    // 分属于这个 Semester 的所有课程信息. 注意 React 禁止修改 props, 所以需要 .slice() 复制一份先.
-  const semester_name = `${props.semester[0]}学年 第${props.semester[1]}学期`;
   const num_courses = course_infos.length;
-  const total_credits = course_infos.map(d=>d.credit).reduce((a, b) => a + b, 0);
+  const total_credits = course_infos
+    .filter(d=>d.score !== "W" && d.score !== "F" && d.score !== "NP")
+    .map(d=>d.credit)
+    .reduce((a, b) => a + b, 0);
   const avg_gpa = calcAvgGPA(course_infos);
 
   // 渲染一个 <SemesterRow> + 若干个 <CourseRow>
   return (
     <div className={"semester-chunk"}>
       <SemesterRow semesterInfo={{
-        semester_name,
+        semester_name: props.semesterName,
         num_courses,
         total_credits,
         avg_gpa,
       }}/>
-      <div class={"rows"}>
+      <div className={"rows"}>
         {course_infos.map(info => <CourseRow courseInfo={info} key={info.name}/>)}
       </div>
     </div>
@@ -137,7 +132,7 @@ function SemesterRow(props) {
       <span className={"right"}>
         <span className={"up"}> {props.semesterInfo.avg_gpa.toFixed(3)} </span>
         <span className={"down"}> (折合 {gpa2score_printable(props.semesterInfo.avg_gpa)}) </span>
-    </span>
+      </span>
     </div>
   );
 }
@@ -174,13 +169,56 @@ function CourseRow(props) {
 
 /* ------------------------------ 总结 ------------------------------ */
 function Summary(props) {
-  return (
-    /* TODO */
-    <>
-      <h2> This is Summary </h2>
-      <div> {JSON.stringify(props.courseInfos)} </div>
-    </>
 
+  // 计算 ｢总绩点｣、｢总学分数｣ 和 ｢总课程数｣ (退课、挂科的不算在内!)
+  const total_credits = props.courseInfos
+    .filter(d=>d.score !== "W" && d.score !== "F" && d.score !== "NP")
+    .map(d=>d.credit)
+    .reduce((a, b) => a + b, 0);
+  const num_courses = props.courseInfos.length;
+  const avg_gpa = calcAvgGPA(props.courseInfos);
+
+  // 计算每个学期的 ｢绩点｣ 和 ｢累计绩点｣
+  const semester_infos = coursesGroupBySemester(props.courseInfos);
+  const all_semester = semester_infos.map(info => info.semester);
+  // ｢绩点｣
+  let all_gpa = all_semester.map(([year, which]) => calcAvgGPA(props.courseInfos
+    .filter(i => (i.semester[0] === year && i.semester[1] === which))
+  ));
+  // ｢累计绩点｣
+  let all_accumulatedGPA = all_semester.map(([year, which]) => calcAvgGPA(props.courseInfos
+    .filter(i => ((i.semester[0] < year) || (i.semester[0] === year && i.semester[1] <= which)))
+  ));
+  console.log("学期名:", all_semester);
+  console.log("绩点:", all_gpa);
+  console.log("累计绩点:", all_accumulatedGPA);
+
+
+  return (
+    <div id={"summary"}>
+      <SemesterRow semesterInfo={{
+        total_credits,
+        num_courses,
+        avg_gpa,
+        semester_name: "总绩点",
+      }}/>
+      <div>
+        {/*TODO: 这里再画个折线图?*/}
+        <table id={"summary-table"}>
+          <thead>
+            <tr><th>学期</th><th>当期绩点</th><th>累计绩点</th></tr>
+          </thead>
+          <tbody>
+            {[...Array(all_semester.length).keys()].map(i =>
+              <tr key={i}>
+              <td style={{ backgroundColor: "#dfd"}}> {`${all_semester[i][0]}年第${all_semester[i][1]}学期`}</td>
+              <td style={{ backgroundColor: hsl2hslprintable(score2hsl(gpa2score(all_gpa[i]))) }}> {all_gpa[i].toFixed(3)} </td>
+              <td style={{ backgroundColor: hsl2hslprintable(score2hsl(gpa2score(all_accumulatedGPA[i]))) }}> {all_accumulatedGPA[i].toFixed(3)} </td>
+            </tr>)}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }
 
@@ -193,12 +231,12 @@ class App extends Component{
     this.state = {
       need_initial_import: true,
       ignore_edited_warning: false,
+      course_infos: null,
     }
-    this.course_infos = null;
 
     /* 为了防止开发阶段大量访问 Helper-API 被查水表... */
     this.state.need_initial_import = false;
-    this.course_infos = COURSE_INFOS_DEV;
+    this.state.course_infos = COURSE_INFOS_DEV;
   }
 
   componentDidMount() {
@@ -207,8 +245,10 @@ class App extends Component{
     if (local_saved_token !== null) {
       localStorage.removeItem("user_token");
       fetchCourseInfoAll(local_saved_token, (infos) => {
-        this.course_infos = infos;
-        this.setState({need_initial_import: false});
+        this.setState({
+          course_infos: infos,
+          need_initial_import: false,
+        });
         localStorage.setItem("user_token", local_saved_token);
       });
     }
@@ -248,7 +288,7 @@ class App extends Component{
       fetchCourseInfoAll(token, (infos) => {
         console.log("infos:", infos);
         console.log("gpa:", calcAvgGPA(infos));
-        this.course_infos = infos;
+        this.setState({ course_infos: infos });
         this.setState({need_initial_import: false});
         localStorage.setItem("user_token", token);     // 存储用户的 token, 下次如果检测到 localStorage 中有, 就不必再向用户询问
       });
@@ -257,7 +297,7 @@ class App extends Component{
       let infos = parseCourseInfoAll(elem);
       console.log("infos:", infos);
       console.log("gpa:", calcAvgGPA(infos));
-      this.course_infos = infos;
+      this.setState({ course_infos: infos });
       this.setState({need_initial_import: false});
     }
     else {
@@ -280,8 +320,8 @@ class App extends Component{
         {this.state.need_initial_import
           ? <Importer onPaste={this.handlePaste}/>
           : <>
-            <GradeBook courseInfos={this.course_infos}/>
-            <Summary courseInfos={this.course_infos}/>
+            <GradeBook courseInfos={this.state.course_infos}/>
+            <Summary courseInfos={this.state.course_infos}/>
           </>}
         <BottomBar/>
       </>

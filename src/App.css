@@ -1,5 +1,6 @@
 :root {
     --max-width: 750px;
+    --grade-book-max-width: 850px;
 }
 
 /* ------------------------------ 顶栏 ------------------------------ */
@@ -101,7 +102,12 @@
 
 /* ------------------------------ 成绩单 ------------------------------ */
 #grade-book {
-    margin-top: 1rem;
+    margin: auto;
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+    box-shadow: 0 0 10px #3333;
+    box-sizing: border-box;
+    max-width: var(--grade-book-max-width);
 }
 .course-row,
 .semester-row {
@@ -121,7 +127,7 @@
 .semester-row .left {
     display: flex;
     flex-direction: column;
-    width: 2rem;
+    width: 2.2rem;
     margin-right: 0.3rem;
     align-items: center;
     justify-content: center;
@@ -183,6 +189,33 @@
 /*.course-row, .semester-row {padding: 0.1rem;}*/
 
 
+/* ------------------------------ 总结 ------------------------------ */
+#summary {
+    margin: 1rem auto auto;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    box-shadow: 0 0 10px #3333;
+    box-sizing: border-box;
+    max-width: var(--grade-book-max-width);
+}
 
-
+#summary-table {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 80%;
+    margin: 0.5rem auto auto;
+    text-align: center;
+}
+#summary-table td,
+#summary-table th {
+    border: 1px solid #ddd;
+    padding: 0.3rem;
+}
+#summary-table tr:hover {
+    opacity: 80%;
+}
+#summary-table th {
+    background-color: #585;
+    color: white;
+}
 

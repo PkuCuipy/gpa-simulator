@@ -2,7 +2,7 @@ import {score2gpa} from "./util.js";
 
 // 100 分的颜色
 const HSL_100 = {
-  h: 95,
+  h: 90,
   s: 100,
   l: 70,
 }
@@ -57,3 +57,7 @@ export function score2proportion(score_str: String) {
   }
 }
 
+
+export function hsl2hslprintable({ h, s, l }) {
+  return `hsl(${h},${s}%,${l}%)`;
+}

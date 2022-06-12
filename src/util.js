@@ -1,12 +1,12 @@
-function seemsByToken(elem) {
+export function seemsByToken(elem) {
   return elem.innerText.match(/^[a-z0-9]{32}$/);
 }
 
-function seemsByPageCopy(elem) {
+export function seemsByPageCopy(elem) {
   return (elem.getElementsByClassName("semester-block").length !== 0);
 }
 
-function normalize_score_from_isop(score) {
+export function normalize_score_from_isop(score) {
   /*** Copied from PKU-Helper source file `score_parser.js` ***/
   if(score==='合格') return 'P';
   else if(score==='不合格') return 'NP';
@@ -15,7 +15,7 @@ function normalize_score_from_isop(score) {
   else return score;
 }
 
-function fetchCourseInfoAll(token, callback) {
+export function fetchCourseInfoAll(token, callback) {
   // 用 token 构造 url 去请求数据, 然后解析出所需的所有课程信息, 最后喂给 callback 函数.
   const req = new XMLHttpRequest();
   req.open("GET", `https://pkuhelper.pku.edu.cn/api_xmcp/isop/scores?user_token=${token}&auto=no`);
@@ -37,7 +37,7 @@ function fetchCourseInfoAll(token, callback) {
   req.send(null);
 }
 
-function getDOMChild(node, indices) {
+export function getDOMChild(node, indices) {
   // indices 如 [1,0,0,0,1,2]
   let ret = node;
   for (let i of indices) {
@@ -46,7 +46,7 @@ function getDOMChild(node, indices) {
   return ret;
 }
 
-function parseCourseInfoAll(DOMElem) {
+export function parseCourseInfoAll(DOMElem) {
   // 从粘贴的 DOM 中 解析出所需的所有课程信息.
   let course_infos = [];
   let semester_blocks = [...DOMElem.getElementsByClassName("semester-block")];
@@ -86,7 +86,7 @@ function parseCourseInfoAll(DOMElem) {
   return course_infos;
 }
 
-function calcAvgGPA(course_infos) {
+export function calcAvgGPA(course_infos) {
   // 计算总绩点
   let creditTotal = 0.0;
   let GPATotal = 0.0;
@@ -99,7 +99,7 @@ function calcAvgGPA(course_infos) {
       else if (info.score === "NP") { }
       else if (info.score === "I") { }
       else if (info.score === "EX") { }
-      else { throw "无法解析成绩"; }
+      else { throw Error("无法解析成绩"); }
     }
     else {
       if (score >= 60 && score <= 100) {
@@ -117,17 +117,17 @@ function calcAvgGPA(course_infos) {
 }
 
 
-function score2gpa(score) {
+export function score2gpa(score) {
   console.assert(60 <= score && score <= 100, `成绩 ${score} 无法进行 GPA 计算`);
   return 4 - 3 * (100 - score) ** 2 / 1600;
 }
 
-function gpa2score(gpa) {
+export function gpa2score(gpa) {
   console.assert(0 <= gpa && gpa <= 100, `GPA ${gpa} 无法进行分数折合!`);
   return 100 - Math.sqrt((6400 - 1600 * gpa) / 3);
 }
 
-function score2gpa_printable(score: String) {
+export function score2gpa_printable(score: String) {
   if (score === "P") { return "通过"}
   else if (score === "F") { return "未通过"}
   else if (score === "W") { return "退课"}
@@ -137,16 +137,15 @@ function score2gpa_printable(score: String) {
   else { return score2gpa(Number(score)).toFixed(3);}
 }
 
-function gpa2score_printable(gpa) {
+export function gpa2score_printable(gpa) {
   return gpa2score(Number(gpa)).toFixed(1);
 }
 
-export {
-  fetchCourseInfoAll,
-  seemsByToken,
-  seemsByPageCopy,
-  parseCourseInfoAll,
-  calcAvgGPA,
-  score2gpa, score2gpa_printable,
-  gpa2score, gpa2score_printable,
+export function coursesGroupBySemester(course_infos) {
+  /* 把所有课程根据 semester 分组 */
+  const semester_names = [...new Set(course_infos.map(info => info.semester.join("-")))].sort();
+  return semester_names.map(sem_name => ({
+    semester: sem_name.split("-").map(Number),
+    course_infos: course_infos.filter(info => info.semester.join("-") === sem_name),
+  }));
 }
