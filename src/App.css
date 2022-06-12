@@ -9,17 +9,19 @@
     align-items: center;
     justify-content: center;
 
-    font-size: 1.2rem;
-    height: 3rem;
+    font-size: 1.5rem;
+    height: 5rem;
     white-space: nowrap;
-    background-color: #eee;
+
+    color: #eee;
+    background-color: #333;
 }
 #title-bar::before,
 #title-bar::after {
     content: "";
-    height: 1px;
+    height: 2px;
     width: 50%;
-    background-color: black;
+    background-color: #aaa;
     overflow: hidden;
     margin: 2rem;
 }
@@ -73,7 +75,7 @@
     width: 90%;
     max-width: var(--max-width);
     margin: 1.5rem auto;    /* margin: auto 实现居中 */
-    border-radius: 1rem;
+    border-radius: 0.5rem;
 }
 #import-prompt ul {
     padding: 0 1rem;
@@ -108,6 +110,7 @@
     box-shadow: 0 0 10px #3333;
     box-sizing: border-box;
     max-width: var(--grade-book-max-width);
+    text-shadow: 0 0 3px white;
 }
 .course-row,
 .semester-row {

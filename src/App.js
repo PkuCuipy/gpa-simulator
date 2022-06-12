@@ -40,7 +40,6 @@ function Settings(props) {
   return (
     <div id={"settings"}>
       <Button name={"重新导入"} icon={import_icon} onClick={props.onClickImport}/>
-      <Button name={"隐藏/显示编辑警告"} icon={warning_icon} onClick={props.onToggleEditedWarning}/>
       <Button name={"添加课程"} icon={add_icon} onClick={props.onNewCourse}/>
     </div>
   )
@@ -266,12 +265,6 @@ class App extends Component{
     this.setState({ need_initial_import: true });
   }
 
-  /* 当用户点击 ｢编辑警告｣ 按钮时的行为 */
-  handleToggleEditedWarning = () => {
-    console.log(`从 ${this.state.ignore_edited_warning} 切换为 ${!this.state.ignore_edited_warning}`);
-    this.setState({ ignore_edited_warning: !this.state.ignore_edited_warning });
-  }
-
   /* 当用户点击 ｢添加课程｣ 按钮时的行为 */
   handleNewCourse = () => {
     /* TODO */
@@ -314,7 +307,6 @@ class App extends Component{
         <TitleBar/>
         <Settings
           onClickImport={this.handleImport}
-          onToggleEditedWarning={this.handleToggleEditedWarning}
           onNewCourse={this.handleNewCourse}
         />
         {this.state.need_initial_import
