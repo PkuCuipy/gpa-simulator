@@ -48,7 +48,7 @@ function Settings(props) {
 function Button(props) {
   return (
     <span className="settings-button" onClick={props.onClick}>
-      <img src={props.icon} alt="import-icon" width="16" height="16" style={{marginRight: ".2rem"}}></img>
+      {props.icon && <img src={props.icon} alt="import-icon" width="16" height="16" style={{marginRight: ".2rem"}}></img>}
       <span> {props.name} </span>
     </span>
   )
@@ -111,7 +111,7 @@ function SemesterChunk(props) {
         avg_gpa,
       }}/>
       <div className={"rows"}>
-        {course_infos.map(info => <CourseRow courseInfo={info} key={info.name}/>)}
+        {course_infos.map(info => <CourseRow courseInfo={info} key={info.name + info.created_timestamp}/>)}
       </div>
     </div>
   );
@@ -188,11 +188,10 @@ function Summary(props) {
   let all_accumulatedGPA = all_semester.map(([year, which]) => calcAvgGPA(props.courseInfos
     .filter(i => ((i.semester[0] < year) || (i.semester[0] === year && i.semester[1] <= which)))
   ));
-  console.log("学期名:", all_semester);
-  console.log("绩点:", all_gpa);
-  console.log("累计绩点:", all_accumulatedGPA);
-
-
+  // console.log("所有课程:", semester_infos);
+  // console.log("学期名:", all_semester);
+  // console.log("绩点:", all_gpa);
+  // console.log("累计绩点:", all_accumulatedGPA);
   return (
     <div id={"summary"}>
       <SemesterRow semesterInfo={{
@@ -222,6 +221,57 @@ function Summary(props) {
 }
 
 
+/* ------------------------------ ｢添加课程｣ 弹窗 ------------------------------ */
+function AddCourseModal(props) {
+  return (
+    <div id={"add-course-modal"} className={"modal"}>
+      <div id={"add-course"}>
+        <div style={{fontSize: "1.2rem", fontWeight: "bold"}}> 添加一门课程 </div><br></br>
+        <div id={"add-course-inputs"}>
+          <span>学年: </span> <input defaultValue={"23"}/> <span>&nbsp;&nbsp;(必填, 例如: 19, 20, ...) </span><br/>
+          <span>学期: </span> <input defaultValue={"3"}/> <span>&nbsp;&nbsp;(必填, 例如: 1, 2, 3) </span><br/>
+          <span>课名: </span> <input defaultValue={"划水学导论"}/> <span>&nbsp;&nbsp;(必填, 例如: Rust程序设计) </span><br/>
+          <span>学分: </span> <input defaultValue={"3"}/> <span>&nbsp;&nbsp;(必填, 例如: 1, 2, ...) </span><br/>
+          <span>成绩: </span> <input defaultValue={"84"}/> <span>&nbsp;&nbsp;(必填, 例如: 59, 84, 100, P, F, W, ...) </span><br/>
+        </div>
+        <Button name={"✅ 确认添加"} onClick={() => {
+          // 判断输入是否合法
+          let input_elems = document.querySelectorAll("#add-course-inputs > input");
+          let [year, which, name, credit, score] = [...input_elems].map(elem => elem.value);
+          console.log(year, which, name, credit, score);
+          const is_year_valid = year => (year !== "" && Number.isInteger(Number(year)) && Number(year) >= 0 && Number(year) <= 99);
+          const is_which_valid = which => (Number.isInteger(Number(which)) && Number(which) >= 1 && Number(which) <= 3);
+          const is_name_valid = name => (name.length > 0);
+          const is_credit_valid = credit => (Number.isInteger(Number(credit)) && Number(credit) >= 1);
+          const is_score_valid = score => ((new Set(["P", "F", "W", "NP", "I", "EX"])).has(score) || (Number.isInteger(Number(score)) && Number(score) >= 0 && Number(score) <= 100));
+          // 如果合法, 则添加课程, 并关闭提示框
+          if (is_year_valid(year) && is_which_valid(which) && is_name_valid(name) && is_credit_valid(credit) && is_score_valid(score)) {
+            document.getElementById("add-course-error-msg").innerText = "";
+            props.addCourse({
+              is_user_created: true,
+              created_timestamp: Date.now(),
+              name,
+              semester: [Number(year), Number(which)],
+              credit: Number(credit),
+              score,
+              edited_score: score,
+              type: "unknown",
+              teacher: "[自行添加的课程]"
+            });
+            props.closeModal();
+          }
+          else {
+            document.getElementById("add-course-error-msg").innerText = "⚠️ 输入内容有误, 请检查后重试~";
+          }
+        }}/>
+        <Button name={"❌ 取消添加"} onClick={props.closeModal}/>
+        <span id={"add-course-error-msg"} style={{color: "#faa", textShadow: "0 0 0.5rem #faa4"}}>️ </span>
+      </div>
+    </div>
+  );
+}
+
+
 
 class App extends Component{
 
@@ -238,6 +288,7 @@ class App extends Component{
     this.state.course_infos = COURSE_INFOS_DEV;
   }
 
+
   componentDidMount() {
     // 如果检测到 localStorage 中有 user_token, 则按照这个加载数据
     const local_saved_token = localStorage.getItem("user_token");
@@ -250,6 +301,14 @@ class App extends Component{
         });
         localStorage.setItem("user_token", local_saved_token);
       });
+    }
+
+    /* 点击其它地方时关闭 Modal */
+    const modal = document.getElementsByClassName("modal")[0];
+    window.onclick = event => {
+      if (event.target === modal) {
+        this.closeAddCourseModal();
+      }
     }
   }
 
@@ -267,8 +326,19 @@ class App extends Component{
 
   /* 当用户点击 ｢添加课程｣ 按钮时的行为 */
   handleNewCourse = () => {
-    /* TODO */
-    console.log("请求添加一门新的课程");
+    this.openAddCourseModal();
+  }
+
+  openAddCourseModal = () => {
+    document.getElementById("add-course-modal").style.display = "flex";
+  }
+
+  closeAddCourseModal = () => {
+    document.getElementById("add-course-modal").style.display = "none";
+  }
+
+  handleAddCourse = (new_course) => {
+    this.setState({ course_infos: [new_course, ...this.state.course_infos] })
   }
 
   /* 当用户向 ｢粘贴区域｣ 粘贴时的行为 */
@@ -305,9 +375,13 @@ class App extends Component{
     return (
       <>
         <TitleBar/>
-        <Settings
+        {this.state.need_initial_import || <Settings
           onClickImport={this.handleImport}
           onNewCourse={this.handleNewCourse}
+        />}
+        <AddCourseModal
+          addCourse={this.handleAddCourse}
+          closeModal={this.closeAddCourseModal}
         />
         {this.state.need_initial_import
           ? <Importer onPaste={this.handlePaste}/>

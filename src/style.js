@@ -16,12 +16,12 @@ const HSL_60 = {
 
 // P / W / I / EX 的颜色
 const HSL_P = {
-  h: 218, s: 20, l: 50
+  h: 218, s: 20, l: 85
 };
 
 // F / NP  的颜色
 const HSL_F = {
-  h: 218, s: 20, l: 85
+  h: -10, s: 50, l: 50
 };
 
 
@@ -29,9 +29,12 @@ const HSL_F = {
 export function score2hsl(score_str: String) {
   /* H: [0, 360]  S: [0, 100]  L: [0, 100] */
   if (score_str === "F" || score_str === "NP") {
-    return HSL_P;
+    return HSL_F;
   }
   else if (score_str === "P" || score_str === "W" || score_str === "I" || score_str === "EX") {
+    return HSL_P;
+  }
+  else if (Number(score_str) < 60) {
     return HSL_F;
   }
   else {
