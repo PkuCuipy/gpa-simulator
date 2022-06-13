@@ -7,7 +7,6 @@
 #title-bar {
     display: flex;
     align-items: center;
-    justify-content: center;
 
     font-size: 1.5rem;
     height: 5rem;
@@ -117,21 +116,21 @@
     background-color: #eff;
     border-bottom: 1px solid #ccc;
     display: flex;
-    flex-direction: row;
     padding: 0.2rem;
 }
 .rows {
-    box-shadow: 0 0 0.4rem #000c;
+    box-shadow: 0 0 0.5rem #aaf;
     width: 90%;
     margin: auto;
 }
 /* -------------- 左部 -------------- */
 .course-row .left,
 .semester-row .left {
-    display: flex;
-    flex-direction: column;
     width: 2.2rem;
     margin-right: 0.3rem;
+
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 }
@@ -246,6 +245,7 @@
     color: white;
     padding: 1rem;
     box-sizing: border-box;
+    box-shadow: 0 0 1rem #fff8;
 }
 #add-course-inputs {
     display: grid;

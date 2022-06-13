@@ -25,7 +25,6 @@ const HSL_F = {
 };
 
 
-
 export function score2hsl(score_str: String) {
   /* H: [0, 360]  S: [0, 100]  L: [0, 100] */
   if (score_str === "F" || score_str === "NP") {
@@ -59,7 +58,6 @@ export function score2proportion(score_str: String) {
     return 100;
   }
 }
-
 
 export function hsl2hslprintable({ h, s, l }) {
   return `hsl(${h},${s}%,${l}%)`;

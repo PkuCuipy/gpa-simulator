@@ -2,17 +2,20 @@ import "./App.css";
 import { Component } from "react";
 import import_icon from "./icons/import.svg";
 import add_icon from "./icons/add.svg";
-import COURSE_INFOS_DEV from "./cuipy-course-info-for-dev.json";
 import {
-  calcAvgGPA, coursesGroupBySemester,
-  fetchCourseInfoAll, gpa2score,
-  gpa2score_printable, isValidScore, nextUniqueId,
-  parseCourseInfoAll,
+  calcAvgGPA,
+  coursesGroupBySemester,
+  fetchCourseInfoAll,
+  gpa2score,
+  gpa2score_printable,
+  isValidScore,
+  nextUniqueId,
+  parseCourseInfoAll, randomGenerateSomeCourseInfo,
   score2gpa_printable,
   seemsByPageCopy,
-  seemsByToken,
+  seemsLikeToken,
 } from "./util.js";
-import { hsl2hslprintable, score2hsl, score2proportion } from "./style";
+import { hsl2hslprintable, score2hsl, score2proportion } from "./color";
 
 
 /* ------------------------------ 顶栏 ------------------------------ */
@@ -38,8 +41,8 @@ function BottomBar() {
 function Settings(props) {
   return (
     <div id={"settings"}>
-      <Button name={"重新导入"} icon={import_icon} onClick={props.onClickImport}/>
-      <Button name={"添加课程"} icon={add_icon} onClick={props.onNewCourse}/>
+      <Button name={"重新导入 (F1)"} icon={import_icon} onClick={props.onClickImport}/>
+      <Button name={"添加课程 (F2)"} icon={add_icon} onClick={props.onNewCourse}/>
     </div>
   )
 }
@@ -62,6 +65,7 @@ function Importer(props) {
         <ul>
           <li><div><strong>方式1:</strong> 复制您的 PKU Helper token, 粘贴到下方;</div></li>
           <li><div><strong>方式2:</strong> 全选 PKU Helper 成绩查询页面并复制, 粘贴到下方;</div></li>
+          <li><div><strong>方式3:</strong> 按下 F3 键, 随机生成一个成绩单 (供功能体验使用); </div></li>
         </ul>
       </div>
       <div id={"paste-here"} contentEditable={"true"} onInput={props.onPaste}>
@@ -74,7 +78,6 @@ function Importer(props) {
 function GradeBook(props) {
   // Grouped by ｢学期名｣
   const semester_infos = coursesGroupBySemester(props.courseInfos);
-  // console.log(semester_infos);
   return (
       <div id={"grade-book"}>
         {semester_infos.map(info =>
@@ -92,15 +95,15 @@ function GradeBook(props) {
 function SemesterChunk(props) {
   console.assert(props.courseInfos.length !== 0, "不允许存在不包含课程的学期!");
 
-  // 计算 <SemesterRow> 所需的信息
+  // 计算 <SemesterRow> 所需的信息.
+  // 注意 React 禁止修改 props, 而 sort() 是 inplace 的! 所以需要 slice() 先复制一份然后再 sort().
   const course_infos = props.courseInfos.slice().sort((a, b) => {
-    let va = isNaN(Number(a.score)) ? -1 : Number(a.score);
-    let vb = isNaN(Number(b.score)) ? -1 : Number(b.score);
-    console.log(a, b);
-    console.log(va, vb);
+    let va = isNaN(Number(a.score)) ? -1 : Number(a.score);   /* 让 ｢非百分制｣ 的排序值最小 (为 -1) */
+    let vb = isNaN(Number(b.score)) ? -1 : Number(b.score);   /* 让 ｢非百分制｣ 的排序值最小 (为 -1) */
     return vb - va;
-  });    // 分属于这个 Semester 的所有课程信息. 注意 React 禁止修改 props, 所以需要 .slice() 复制一份先.
-  console.log(course_infos);
+  });
+
+  // 计算这个学期的课程数、有效学分数、平均 GPA
   const num_courses = course_infos.length;
   const total_credits = course_infos
     .filter(d=>d.score !== "W" && d.score !== "F" && d.score !== "NP" && (isNaN(Number(d.score)) || Number(d.score) >= 60))
@@ -118,9 +121,13 @@ function SemesterChunk(props) {
         avg_gpa,
       }}/>
       <div className={"rows"}>
-        {course_infos.map(info => <CourseRow courseInfo={info}
-                                             changeScoreOfCourse={props.changeScoreOfCourse}
-                                             key={info.unique_id}/>)}
+        {course_infos.map(info =>
+          <CourseRow
+            courseInfo={info}
+            changeScoreOfCourse={props.changeScoreOfCourse}
+            key={info.unique_id}
+          />
+        )}
       </div>
     </div>
   );
@@ -173,12 +180,28 @@ function CourseRow(props) {
           suppressContentEditableWarning={true}
           onBlur={
             (event) => {    /* 注意这里得用 onBlur 而不是 onFocusout! */
-              let new_score = event.target.innerText;
+              let new_score = event.target.innerText.trim();
+              event.target.innerText = new_score;
               if (isValidScore(new_score)) {
                 props.changeScoreOfCourse(props.courseInfo.unique_id, new_score);
+              } else {
+                event.target.innerText = props.courseInfo.original_score;
+                props.changeScoreOfCourse(props.courseInfo.unique_id, props.courseInfo.original_score);
               }
-              else {
-                event.target.innerText = props.courseInfo.edited_score;
+            }
+          }
+          onKeyDown={
+            (event) => {
+              if (event.key.toLowerCase() === "enter") {
+                event.preventDefault();       /* 这是 React 阻止事件默认行为的写法. (常规写法 return false 是不行的!!!) */
+                let new_score = event.target.innerText.trim();    /* 以下完全照搬 onBlur 的事件处理 */
+                event.target.innerText = new_score;
+                if (isValidScore(new_score)) {
+                  props.changeScoreOfCourse(props.courseInfo.unique_id, new_score);
+                } else {
+                  event.target.innerText = props.courseInfo.original_score;
+                  props.changeScoreOfCourse(props.courseInfo.unique_id, props.courseInfo.original_score);
+                }
               }
             }
           }
@@ -261,7 +284,7 @@ function AddCourseModal(props) {
           // 判断输入是否合法
           let input_elems = document.querySelectorAll("#add-course-inputs > input");
           let [year, which, name, credit, score] = [...input_elems].map(elem => elem.value);
-          console.log(year, which, name, credit, score);
+          // console.log(year, which, name, credit, score);
           const is_year_valid = year => (year !== "" && Number.isInteger(Number(year)) && Number(year) >= 0 && Number(year) <= 99);
           const is_which_valid = which => (Number.isInteger(Number(which)) && Number(which) >= 1 && Number(which) <= 3);
           const is_name_valid = name => (name.length > 0);
@@ -277,7 +300,7 @@ function AddCourseModal(props) {
               semester: [Number(year), Number(which)],
               credit: Number(credit),
               score,
-              edited_score: score,
+              original_score: score,
               type: "unknown",
               teacher: "[自行添加的课程]"
             });
@@ -287,7 +310,7 @@ function AddCourseModal(props) {
             document.getElementById("add-course-error-msg").innerText = "⚠️ 输入内容有误, 请检查后重试~";
           }
         }}/>
-        <Button name={"❌ 取消添加"} onClick={props.closeModal}/>
+        <Button name={"❌ 取消添加 (Esc)"} onClick={props.closeModal}/>
         <span id={"add-course-error-msg"} style={{color: "#faa", textShadow: "0 0 0.5rem #faa4"}}>️ </span>
       </div>
     </div>
@@ -305,10 +328,6 @@ class App extends Component{
       ignore_edited_warning: false,
       course_infos: null,
     }
-
-    // /* 为了防止开发阶段大量访问 Helper-API 被查水表... */
-    // this.state.need_initial_import = false;
-    // this.state.course_infos = COURSE_INFOS_DEV;
   }
 
 
@@ -333,6 +352,32 @@ class App extends Component{
         this.closeAddCourseModal();
       }
     }
+
+    /* 快捷键 */
+    window.addEventListener("keydown", (evt) => {
+      console.log(evt);
+      /* 快捷键 F1 请求重新导入 */
+      if (evt.key === "F1") {
+        this.handleReImport();
+      }
+      /* 快捷键 F2 开启/关闭添加课程界面 */
+      if (evt.key === "F2") {
+        this.toggleAddCourseModal();
+      }
+      /* 快捷键 F3 随机生成一张成绩单 */
+      if (evt.key === "F3" && this.state.need_initial_import) {
+        let infos = randomGenerateSomeCourseInfo();
+        this.setState({
+          course_infos: infos,
+          need_initial_import: false,
+        });
+      }
+      /* 快捷键 Esc 关闭添加课程界面 */
+      if (evt.key === "Escape") {
+        this.closeAddCourseModal();
+      }
+    })
+
   }
 
   /* 清空 ｢粘贴区域｣ 中的内容 */
@@ -342,9 +387,11 @@ class App extends Component{
   }
 
   /* 当用户点击 ｢重新导入｣ 按钮时的行为 */
-  handleImport = () => {
+  handleReImport = () => {
     console.log("请求重新导入数据");
-    this.setState({ need_initial_import: true });
+    if (window.confirm("您确定要重新导入吗? 这将丢失您的所有修改!")) {
+      this.setState({ need_initial_import: true });
+    }
   }
 
   /* 当用户点击 ｢添加课程｣ 按钮时的行为 */
@@ -352,15 +399,20 @@ class App extends Component{
     this.openAddCourseModal();
   }
 
+  /* 控制 ｢添加课程填写框｣ 的显示/关闭 */
   openAddCourseModal = () => {
     document.getElementById("add-course-modal").style.display = "flex";
   }
-
   closeAddCourseModal = () => {
     document.getElementById("add-course-modal").style.display = "none";
   }
+  toggleAddCourseModal = () => {
+    const modal = document.getElementById("add-course-modal");
+    modal.style.display = (modal.style.display === "flex") ? "none" : "flex";
+  }
 
-  handleAddCourse = (new_course) => {
+  /* 向自己维护的课程列表中添加一门新的课程 */
+  addACourse = (new_course) => {
     this.setState({ course_infos: [new_course, ...this.state.course_infos] })
   }
 
@@ -369,13 +421,17 @@ class App extends Component{
     console.log("用户粘贴了一些东西, 来看看能不能解析?");
     let elem = evt.target;              // 这个理应就是 #paste-here
                                         // 判断 ｢导入方式｣
-    if (seemsByToken(elem)) {           // 1. 粘贴的是 ｢token｣ 类似物
-      const token = elem.innerText;
+
+    const inner_text = elem.innerText.trim();
+    if (seemsLikeToken(inner_text)) { // 1. 粘贴的是 ｢token｣ 类似物
+      const token = inner_text;
       fetchCourseInfoAll(token, (infos) => {
         console.log("infos:", infos);
         console.log("gpa:", calcAvgGPA(infos));
-        this.setState({ course_infos: infos });
-        this.setState({need_initial_import: false});
+        this.setState({
+          course_infos: infos,
+          need_initial_import: false,
+        });
         localStorage.setItem("user_token", token);     // 存储用户的 token, 下次如果检测到 localStorage 中有, 就不必再向用户询问
       });
     }
@@ -383,8 +439,10 @@ class App extends Component{
       let infos = parseCourseInfoAll(elem);
       console.log("infos:", infos);
       console.log("gpa:", calcAvgGPA(infos));
-      this.setState({ course_infos: infos });
-      this.setState({need_initial_import: false});
+      this.setState({
+        course_infos: infos,
+        need_initial_import: false,
+      });
     }
     else {
       console.log("无法识别您粘贴的内容w 请仔细阅读说明后重试🥺")
@@ -409,11 +467,11 @@ class App extends Component{
       <>
         <TitleBar/>
         {this.state.need_initial_import || <Settings
-          onClickImport={this.handleImport}
+          onClickImport={this.handleReImport}
           onNewCourse={this.handleNewCourse}
         />}
         <AddCourseModal
-          addCourse={this.handleAddCourse}
+          addCourse={this.addACourse}
           closeModal={this.closeAddCourseModal}
         />
         {this.state.need_initial_import

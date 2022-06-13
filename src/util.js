@@ -5,8 +5,8 @@ export const nextUniqueId = (() => {
   }
 })();
 
-export function seemsByToken(elem) {
-  return elem.innerText.match(/^[a-z0-9]{32}$/);
+export function seemsLikeToken(text) {
+  return text.match(/^[a-z0-9]{32}$/) !== null;
 }
 
 export function seemsByPageCopy(elem) {
@@ -23,7 +23,7 @@ export function normalize_score_from_isop(score) {
 }
 
 export function isValidScore(score: String) {
-  return ((new Set(["P", "F", "W", "NP", "I", "EX"])).has(score) || (score !== "" && Number.isInteger(Number(score)) && Number(score) >= 0 && Number(score) <= 100));
+  return ((new Set(["P", "F", "W", "NP", "I", "EX"])).has(score) || (score !== "" && Number(score) >= 0 && Number(score) <= 100));
 }
 
 export function fetchCourseInfoAll(token, callback) {
@@ -32,7 +32,6 @@ export function fetchCourseInfoAll(token, callback) {
   req.open("GET", `https://pkuhelper.pku.edu.cn/api_xmcp/isop/scores?user_token=${token}&auto=no`);
   req.onload = function() {
     const response_json = JSON.parse(this.response);
-    // console.log(response_json);
     const course_infos = response_json.cjxx.map(info => ({
       is_user_created: false,
       unique_id: nextUniqueId(),
@@ -40,7 +39,7 @@ export function fetchCourseInfoAll(token, callback) {
       semester: [Number(info.xnd.match(/^(\d+)-/)[1]), Number(info.xq)],  // 学期
       credit: Number(info.xf),                                            // 学分
       score: normalize_score_from_isop(info.xqcj),                        // 学期成绩
-      edited_score: normalize_score_from_isop(info.xqcj),
+      original_score: normalize_score_from_isop(info.xqcj),
       type: info.kclbmc,                                                  // 课程类别名称
       teacher: info.skjsxm.match(/-(.+?)\$/)[1],                          // 授课教师姓名
     }));
@@ -62,16 +61,13 @@ export function parseCourseInfoAll(DOMElem) {
   // 从粘贴的 DOM 中 解析出所需的所有课程信息.
   let course_infos = [];
   let semester_blocks = [...DOMElem.getElementsByClassName("semester-block")];
-  // console.log(DOMElem.getElementsByClassName("semester-block"));
   for (let block of semester_blocks.slice(0, -1)) {   /* 最后一项是 "总绩点", 不是一个 "学期", 因此丢掉 */
-    // console.log(block);
     let semester_name = getDOMChild(block, [0,0,1,0,0,0]).innerText;
     if (semester_name === "新增成绩") {
-      continue;   // 防止用户输入中有 "新增成绩" 尚未 "已阅"
+      continue;   // 防止用户输入中有 ｢新增成绩｣ 尚未 ｢已阅｣
     }
     let course_rows = block.getElementsByClassName("course-row");
     for (let row of course_rows) {
-      // console.log(row);
       let name = getDOMChild(row, [0,1,0,0,0,0]).innerText;
       let semester = semester_name.match(/(\d+)学年 第(\d+)学期/).slice(1, 3).map(Number);     // "19学年 第2学期" --> [19, 2]
       let credit = Number(getDOMChild(row, [0,0,0,0,0]).innerText);
@@ -81,21 +77,42 @@ export function parseCourseInfoAll(DOMElem) {
       let teacher = type_teacher[1].trim();
       let course_info = {
         is_user_created: false,
+        unique_id: nextUniqueId(),
         name,
         semester,
         credit,
         score,
-        edited_score: score,
+        original_score: score,
         type,
         teacher,
       };
-      // console.log(course_info);
       course_infos.push(course_info);
     }
   }
-
   course_infos = course_infos.filter(info => info.semester !== "新增成绩");
   return course_infos;
+}
+
+
+export function randomGenerateSomeCourseInfo() {
+  // 随机生成一张成绩单
+  // TODO
+  let generated_infos = [...Array(20).keys()].map(i => {
+    console.log(i);
+    return {
+      credit: 1,
+      is_user_created: false,
+      name: "随机的课程名",
+      score: "90",
+      original_score: "90",
+      semester: [23, 3],
+      teacher: "随机的老师名",
+      type: "不重要...",
+      unique_id: i,
+    };
+  });
+  console.log(generated_infos);
+  return generated_infos;
 }
 
 export function calcAvgGPA(course_infos) {
@@ -121,7 +138,7 @@ export function calcAvgGPA(course_infos) {
         creditTotal += credit;
       }
       else {
-        /* 按照 PKU-Helper 的计算规则, 不及格的课程不参与计算 */
+        /* 按照 PKU-Helper 的计算规则, [0, 60) 的课程也不参与绩点计算 */
       }
     }
   }
