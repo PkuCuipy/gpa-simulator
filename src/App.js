@@ -334,8 +334,8 @@ class App extends Component{
             course_infos: infos,
             need_initial_import: false,
           });
+          localStorage.setItem("user_token", local_saved_token);
         }
-        localStorage.setItem("user_token", local_saved_token);
       });
     }
 
