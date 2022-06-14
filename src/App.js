@@ -1,4 +1,4 @@
-import "./App.css";
+import "./css/App.css";
 import { Component } from "react";
 import import_icon from "./icons/import.svg";
 import add_icon from "./icons/add.svg";
@@ -32,8 +32,9 @@ function BottomBar() {
 function Settings(props) {
   return (
     <div id={"settings"}>
-      <Button name={"重新导入 (F1)"} icon={import_icon} onClick={props.onClickImport}/>
-      <Button name={"添加课程 (F2)"} icon={add_icon} onClick={props.onNewCourse}/>
+      <Button name={"返回导入成绩界面 (F1)"} icon={import_icon} onClick={props.onClickImport}/>
+      <Button name={"添加一门新的课程 (F2)"} icon={add_icon} onClick={props.onNewCourse}/>
+      <Button name={"随机生成成绩单 (F3)"} onClick={props.onRandomGenerate}/>
     </div>
   )
 }
@@ -56,7 +57,8 @@ function Importer(props) {
         <ul>
           <li><div><strong> 方式1: </strong> 复制您 PKU Helper 的 <strong>User Token</strong> 并粘贴到下方</div></li>
           <li><div><strong> 方式2: </strong> 全选并复制 PKU Helper 的 <strong>整个成绩查询页面</strong> 并粘贴到下方</div></li>
-          <li><div><strong> 方式3: </strong> 按下 <strong>F3</strong> 键以随机生成一个成绩单 (供功能体验使用) </div></li>
+          <li><div><strong> 方式3: </strong>  <button onClick={props.onRandomGenerate}> 点击这里 </button> 或按下 <strong>F3</strong> 键以 <strong>随机生成</strong>一份成绩单 (供功能体验使用) </div></li>
+
         </ul>
       </div>
       <div id={"paste-here"} contentEditable={"true"} onInput={props.onPaste}>
@@ -321,6 +323,7 @@ class App extends Component{
   }
 
   componentDidMount() {
+
     // 如果检测到 localStorage 中有 user_token, 则按照这个加载数据
     const local_saved_token = localStorage.getItem("user_token");
     if (local_saved_token !== null) {
@@ -356,12 +359,8 @@ class App extends Component{
         this.toggleAddCourseModal();
       }
       /* 快捷键 F3 随机生成一张成绩单 */
-      if (evt.key === "F3" && this.state.need_initial_import) {
-        let infos = randomGenerateSomeCourseInfo();
-        this.setState({
-          course_infos: infos,
-          need_initial_import: false,
-        });
+      if (evt.key === "F3") {
+        this.handleRandomGenerate();
       }
       /* 快捷键 Esc 关闭添加课程界面 */
       if (evt.key === "Escape") {
@@ -380,13 +379,25 @@ class App extends Component{
   /* 当用户点击 ｢重新导入｣ 按钮时的行为 */
   handleReImport = () => {
     if (window.confirm("您确定要重新导入吗? 这将丢失您的所有修改!")) {
-      this.setState({ need_initial_import: true });
+      // this.setState({ need_initial_import: true }); // 不用这个了..
+      window.location.reload(); // 直接简单粗暴刷新页面得了...
     }
   }
 
   /* 当用户点击 ｢添加课程｣ 按钮时的行为 */
   handleNewCourse = () => {
     this.openAddCourseModal();
+  }
+
+  /* 当用户点击 ｢随机生成｣ 按钮时的行为 */
+  handleRandomGenerate = () => {
+    if (this.state.need_initial_import || window.confirm("您确定要随机生成一份成绩单吗? 这将丢失您当前页面的所有修改!")) {
+      let infos = randomGenerateSomeCourseInfo();
+      this.setState({
+        course_infos: infos,
+        need_initial_import: false,
+      });
+    }
   }
 
   /* 控制 ｢添加课程填写框｣ 的显示/关闭 */
@@ -459,13 +470,15 @@ class App extends Component{
         {this.state.need_initial_import || <Settings
           onClickImport={this.handleReImport}
           onNewCourse={this.handleNewCourse}
+          onRandomGenerate={this.handleRandomGenerate}
         />}
         <AddCourseModal
           addCourse={this.addACourse}
           closeModal={this.closeAddCourseModal}
         />
         {this.state.need_initial_import
-          ? <Importer onPaste={this.handlePaste}/>
+          ? <Importer onPaste={this.handlePaste}
+                      onRandomGenerate={this.handleRandomGenerate}/>
           : <>
             <GradeBook courseInfos={this.state.course_infos}
                        changeScoreOfCourse={this.changeScoreOfCourse}/>
