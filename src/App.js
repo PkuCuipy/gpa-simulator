@@ -63,9 +63,9 @@ function Importer(props) {
       <div id={"import-prompt"}>
         😀 请在下方输入框内粘贴以导入您的课程成绩信息:
         <ul>
-          <li><div><strong>方式1:</strong> 复制您的 PKU Helper token, 粘贴到下方;</div></li>
-          <li><div><strong>方式2:</strong> 全选 PKU Helper 成绩查询页面并复制, 粘贴到下方;</div></li>
-          <li><div><strong>方式3:</strong> 按下 F3 键, 随机生成一个成绩单 (供功能体验使用); </div></li>
+          <li><div><strong> 方式1: </strong> 复制您 PKU Helper 的 <strong>User Token</strong> 并粘贴到下方</div></li>
+          <li><div><strong> 方式2: </strong> 全选并复制 PKU Helper 的 <strong>整个成绩查询页面</strong> 并粘贴到下方</div></li>
+          <li><div><strong> 方式3: </strong> 按下 <strong>F3</strong> 键以随机生成一个成绩单 (供功能体验使用) </div></li>
         </ul>
       </div>
       <div id={"paste-here"} contentEditable={"true"} onInput={props.onPaste}>
@@ -337,10 +337,12 @@ class App extends Component{
     if (local_saved_token !== null) {
       localStorage.removeItem("user_token");
       fetchCourseInfoAll(local_saved_token, (infos) => {
-        this.setState({
-          course_infos: infos,
-          need_initial_import: false,
-        });
+        if (window.confirm("检测到您上次的 token 信息, 是否以此身份继续?")) {
+          this.setState({
+            course_infos: infos,
+            need_initial_import: false,
+          });
+        }
         localStorage.setItem("user_token", local_saved_token);
       });
     }
@@ -357,11 +359,11 @@ class App extends Component{
     window.addEventListener("keydown", (evt) => {
       console.log(evt);
       /* 快捷键 F1 请求重新导入 */
-      if (evt.key === "F1") {
+      if (evt.key === "F1" && !this.state.need_initial_import) {
         this.handleReImport();
       }
       /* 快捷键 F2 开启/关闭添加课程界面 */
-      if (evt.key === "F2") {
+      if (evt.key === "F2" && !this.state.need_initial_import) {
         this.toggleAddCourseModal();
       }
       /* 快捷键 F3 随机生成一张成绩单 */
