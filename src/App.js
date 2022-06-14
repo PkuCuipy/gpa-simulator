@@ -1,7 +1,8 @@
 import "./css/App.css";
 import { Component } from "react";
-import import_icon from "./icons/import.svg";
+import back_icon from "./icons/back.svg";
 import add_icon from "./icons/add.svg";
+import random_icon from "./icons/dice.svg";
 import { calcAvgGPA, coursesGroupBySemester, gpa2score, gpa2score_printable, score2gpa_printable, isValidScore, nextUniqueId, } from "./utils/miscs.js";
 import { hsl2hslprintable, score2hsl, score2proportion } from "./utils/color.js";
 import { seemsByPageCopy, parseCourseInfoAll } from "./utils/from-paste.js";
@@ -32,9 +33,9 @@ function BottomBar() {
 function Settings(props) {
   return (
     <div id={"settings"}>
-      <Button name={"返回导入成绩界面 (F1)"} icon={import_icon} onClick={props.onClickImport}/>
+      <Button name={"返回导入成绩界面 (F1)"} icon={back_icon} onClick={props.onClickImport}/>
       <Button name={"添加一门新的课程 (F2)"} icon={add_icon} onClick={props.onNewCourse}/>
-      <Button name={"随机生成成绩单 (F3)"} onClick={props.onRandomGenerate}/>
+      <Button name={"随机生成成绩单 (F3)"} icon={random_icon} onClick={props.onRandomGenerate}/>
     </div>
   )
 }
@@ -57,7 +58,7 @@ function Importer(props) {
         <ul>
           <li><div><strong> 方式1: </strong> 复制您 PKU Helper 的 <strong>User Token</strong> 并粘贴到下方</div></li>
           <li><div><strong> 方式2: </strong> 全选并复制 PKU Helper 的 <strong>整个成绩查询页面</strong> 并粘贴到下方</div></li>
-          <li><div><strong> 方式3: </strong>  <button onClick={props.onRandomGenerate}> 点击这里 </button> 或按下 <strong>F3</strong> 键以 <strong>随机生成</strong>一份成绩单 (供功能体验使用) </div></li>
+          <li><div><strong> 方式3: </strong>  <button onClick={props.onRandomGenerate}> 🎲 点击这里 </button> 或按下 <strong>F3</strong> 键以 <strong>随机生成</strong>一份成绩单 (供功能体验使用) </div></li>
 
         </ul>
       </div>
@@ -267,11 +268,11 @@ function AddCourseModal(props) {
       <div id={"add-course"}>
         <div style={{fontSize: "1.2rem", fontWeight: "bold"}}> 添加一门课程 </div><br></br>
         <div id={"add-course-inputs"}>
-          <span>学年: </span> <input defaultValue={"23"}/> <span>&nbsp;&nbsp;(必填, 例如: 19, 20, ...) </span><br/>
-          <span>学期: </span> <input defaultValue={"3"}/> <span>&nbsp;&nbsp;(必填, 例如: 1, 2, 3) </span><br/>
-          <span>课名: </span> <input defaultValue={"划水学导论"}/> <span>&nbsp;&nbsp;(必填, 例如: Rust程序设计) </span><br/>
-          <span>学分: </span> <input defaultValue={"3"}/> <span>&nbsp;&nbsp;(必填, 例如: 1, 2, ...) </span><br/>
-          <span>成绩: </span> <input defaultValue={"84"}/> <span>&nbsp;&nbsp;(必填, 例如: 59, 84, 100, P, F, W, ...) </span><br/>
+          <span>学年: </span> <input defaultValue={"23"}/> <span className={"hint"}>&nbsp;&nbsp;(必填, 例如: 19, 20, ...) </span><br/>
+          <span>学期: </span> <input defaultValue={"3"}/> <span className={"hint"}>&nbsp;&nbsp;(必填, 例如: 1, 2, 3) </span><br/>
+          <span>课名: </span> <input defaultValue={"划水学导论"}/> <span className={"hint"}>&nbsp;&nbsp;(必填, 例如: Rust程序设计) </span><br/>
+          <span>学分: </span> <input defaultValue={"3"}/> <span className={"hint"}>&nbsp;&nbsp;(必填, 例如: 1, 2, ...) </span><br/>
+          <span>成绩: </span> <input defaultValue={"84"}/> <span className={"hint"}>&nbsp;&nbsp;(必填, 例如: 59, 84, 100, P, F, W, ...) </span><br/>
         </div>
         <Button name={"✅ 确认添加"} onClick={() => {
           // 判断输入是否合法

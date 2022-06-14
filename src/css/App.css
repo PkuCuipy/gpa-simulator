@@ -1,6 +1,8 @@
 :root {
     --max-width: 750px;
     --grade-book-max-width: 850px;
+    --modal-width: 500px;
+    --modal-width-phone: 200px;
 }
 
 /* ------------------------------ 顶栏 ------------------------------ */
@@ -240,7 +242,7 @@
     user-select: none;
 }
 #add-course {
-    width: calc(var(--max-width) * 0.7);
+    width: var(--modal-width);
     background-color: rgba(0, 0, 0, 0.9);
     border-radius: 0.5rem;
     color: white;
@@ -258,6 +260,25 @@
     margin: 0.3rem;
 }
 
+@media (max-width: 500px) {
+    #add-course {
+        width: 300px;
+        background-color: rgba(0, 0, 0, 0.9);
+    }
+    #add-course .hint {
+        /*display: none;*/
+        font-size: 0.5rem;
+    }
+    #add-course-inputs input {
+        width: 5rem;
+    }
+    #add-course-inputs {
+        display: grid;
+        grid-template-rows: 1fr 1fr 1fr 1fr 1fr 0.5fr;
+        grid-template-columns: 0.3fr 0fr 1fr 0fr;
+        align-items: center;
+    }
+}
 
 
 
