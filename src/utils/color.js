@@ -1,4 +1,4 @@
-import {score2gpa} from "./util.js";
+import {score2gpa} from "./miscs.js";
 
 // 100 分的颜色
 const HSL_100 = {

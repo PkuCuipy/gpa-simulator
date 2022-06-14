@@ -2,20 +2,11 @@ import "./App.css";
 import { Component } from "react";
 import import_icon from "./icons/import.svg";
 import add_icon from "./icons/add.svg";
-import {
-  calcAvgGPA,
-  coursesGroupBySemester,
-  fetchCourseInfoAll,
-  gpa2score,
-  gpa2score_printable,
-  isValidScore,
-  nextUniqueId,
-  parseCourseInfoAll, randomGenerateSomeCourseInfo,
-  score2gpa_printable,
-  seemsByPageCopy,
-  seemsLikeToken,
-} from "./util.js";
-import { hsl2hslprintable, score2hsl, score2proportion } from "./color";
+import { calcAvgGPA, coursesGroupBySemester, gpa2score, gpa2score_printable, score2gpa_printable, isValidScore, nextUniqueId, } from "./utils/miscs.js";
+import { hsl2hslprintable, score2hsl, score2proportion } from "./utils/color.js";
+import { seemsByPageCopy, parseCourseInfoAll } from "./utils/from-paste.js";
+import { randomGenerateSomeCourseInfo } from "./utils/random-generate.js";
+import { seemsLikeToken, fetchCourseInfoAll } from "./utils/from-api.js";
 
 
 /* ------------------------------ 顶栏 ------------------------------ */
@@ -325,11 +316,9 @@ class App extends Component{
     super(props);
     this.state = {
       need_initial_import: true,
-      ignore_edited_warning: false,
       course_infos: null,
     }
   }
-
 
   componentDidMount() {
     // 如果检测到 localStorage 中有 user_token, 则按照这个加载数据
@@ -357,7 +346,7 @@ class App extends Component{
 
     /* 快捷键 */
     window.addEventListener("keydown", (evt) => {
-      console.log(evt);
+      // console.log(evt);
       /* 快捷键 F1 请求重新导入 */
       if (evt.key === "F1" && !this.state.need_initial_import) {
         this.handleReImport();
@@ -378,7 +367,7 @@ class App extends Component{
       if (evt.key === "Escape") {
         this.closeAddCourseModal();
       }
-    })
+    });
 
   }
 
@@ -390,7 +379,6 @@ class App extends Component{
 
   /* 当用户点击 ｢重新导入｣ 按钮时的行为 */
   handleReImport = () => {
-    console.log("请求重新导入数据");
     if (window.confirm("您确定要重新导入吗? 这将丢失您的所有修改!")) {
       this.setState({ need_initial_import: true });
     }
@@ -428,7 +416,7 @@ class App extends Component{
     if (seemsLikeToken(inner_text)) { // 1. 粘贴的是 ｢token｣ 类似物
       const token = inner_text;
       fetchCourseInfoAll(token, (infos) => {
-        console.log("infos:", infos);
+        console.log("utils:", infos);
         console.log("gpa:", calcAvgGPA(infos));
         this.setState({
           course_infos: infos,
@@ -439,7 +427,7 @@ class App extends Component{
     }
     else if (seemsByPageCopy(elem)) {   // 2. 粘贴的是 ｢成绩查询页面｣ 类似物
       let infos = parseCourseInfoAll(elem);
-      console.log("infos:", infos);
+      console.log("utils:", infos);
       console.log("gpa:", calcAvgGPA(infos));
       this.setState({
         course_infos: infos,
@@ -447,7 +435,7 @@ class App extends Component{
       });
     }
     else {
-      console.log("无法识别您粘贴的内容w 请仔细阅读说明后重试🥺")
+      alert("无法识别您粘贴的内容w 请仔细阅读说明后重试🥺")
     }
 
     this.clearPasteArea();
