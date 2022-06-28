@@ -35,7 +35,7 @@
     flex-direction: column;
 
     font-size: 0.8rem;
-    height: 3rem;
+    height: 4rem;
     white-space: nowrap;
 
     color: #eee;
@@ -72,11 +72,12 @@
 /* ------------------------------ 导入器 ------------------------------ */
 #import-prompt {
     background-color: #ccc;
-    padding: 0.5rem 3%;
+    padding: 0.5rem 1.5rem;
     width: 90%;
     max-width: var(--max-width);
     margin: 1.5rem auto;    /* margin: auto 实现居中 */
     border-radius: 0.5rem;
+    box-sizing: border-box;
     box-shadow: 0 0 0.25rem white;
 }
 #import-prompt ul {
@@ -86,7 +87,8 @@
 #paste-here {
     background-color: #eee;
     width: 90%;
-    height: 18rem;
+    height: 20rem;
+    box-sizing: border-box;
     margin: 1.5rem auto;        /* margin: auto 实现居中 */
     border-radius: 0.5rem;
     border: 3px solid #ddd;
@@ -189,10 +191,10 @@
     box-shadow: 0 0 0.4rem #000c;
 }
 
+/* 简洁模式的一种实现方式 (暂不打算使用) */
 /*.course-row .down {display: none;}*/
 /*.semester-chunk {margin-bottom: 3rem;}*/
 /*.course-row, .semester-row {padding: 0.1rem;}*/
-
 
 /* ------------------------------ 总结 ------------------------------ */
 #summary {

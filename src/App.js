@@ -23,8 +23,9 @@ function TitleBar() {
 function BottomBar() {
   return (
     <div id={"bottom-bar"}>
-      <div> 绩点公式: GPA(x) = 4 - 3(100 - x)² / 1600 </div>
       <div> ️⚠︎ 本页面结果仅供参考, 请以学校官方结果为准! </div>
+      <div> 绩点公式: GPA(x) = 4 - 3(100 - x)² / 1600 </div>
+      <div> ️基于 GPLv3 协议在 <a href="https://github.com/PkuCuipy/gpa-simulator" style={{color: "inherit"}}> GitHub</a> 开源 </div>
     </div>
   );
 }
@@ -54,13 +55,18 @@ function Importer(props) {
   return (
     <div id={"importer"}>
       <div id={"import-prompt"}>
-        😀 请在下方输入框内粘贴以导入您的课程成绩信息:
-        <ul>
-          <li><div><strong> 方式1: </strong> 复制您 PKU Helper 的 <strong>User Token</strong> 并粘贴到下方</div></li>
-          <li><div><strong> 方式2: </strong> 全选并复制 PKU Helper 的 <strong>整个成绩查询页面</strong> 并粘贴到下方</div></li>
-          <li><div><strong> 方式3: </strong>  <button onClick={props.onRandomGenerate}> 🎲 点击这里 </button> 或按下 <strong>F3</strong> 键以 <strong>随机生成</strong>一份成绩单 (供功能体验使用) </div></li>
-
-        </ul>
+        <div style={{fontSize: "1.15rem", fontWeight: "Bold", marginBottom: "0.2rem", textShadow: "0 0 1rem white"}}> 成绩导入指南 </div>
+          <div>
+            <strong> • 方式1: </strong>
+            复制 <strong>树洞 User Token</strong> 并粘贴到下方； </div>
+          <div>
+            <strong> • 方式2: </strong>
+            访问 <a style={{textDecoration: "none", fontWeight: "Bold"}} href="https://pkuhelper.pku.edu.cn/my_score/">PKU Helper 成绩查询页</a>，全选并复制<strong>整个页面</strong>；
+          </div>
+          <div>
+            <strong> • 方式3: </strong>
+            <button onClick={props.onRandomGenerate}> 🎲 点击这里 </button> <strong>随机生成</strong>一份成绩单；
+          </div>
       </div>
       <div id={"paste-here"} contentEditable={"true"} onInput={props.onPaste}>
       </div>
@@ -379,7 +385,7 @@ class App extends Component{
 
   /* 当用户点击 ｢重新导入｣ 按钮时的行为 */
   handleReImport = () => {
-    if (window.confirm("您确定要重新导入吗? 这将丢失您的所有修改!")) {
+    if (window.confirm("确定要返回吗? 您将丢失所有的修改!")) {
       // this.setState({ need_initial_import: true }); // 不用这个了..
       window.location.reload(); // 直接简单粗暴刷新页面得了...
     }
