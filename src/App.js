@@ -3,7 +3,7 @@ import { Component } from "react";
 import back_icon from "./icons/back.svg";
 import add_icon from "./icons/add.svg";
 import random_icon from "./icons/dice.svg";
-import { calcAvgGPA, coursesGroupBySemester, gpa2score, gpa2score_printable, score2gpa_printable, isValidScore, nextUniqueId, } from "./utils/miscs.js";
+import { calcAvgGPA, coursesGroupBySemester, gpa2score, gpa2score_printable, score2gpa_printable, score2sortVal, isValidScore, nextUniqueId, } from "./utils/miscs.js";
 import { hsl2hslprintable, score2hsl, score2proportion } from "./utils/color.js";
 import { seemsByPageCopy, parseCourseInfoAll } from "./utils/from-paste.js";
 import { randomGenerateSomeCourseInfo } from "./utils/random-generate.js";
@@ -98,9 +98,13 @@ function SemesterChunk(props) {
   // 计算 <SemesterRow> 所需的信息.
   // 注意 React 禁止修改 props, 而 sort() 是 inplace 的! 所以需要 slice() 先复制一份然后再 sort().
   const course_infos = props.courseInfos.slice().sort((a, b) => {
-    let va = isNaN(Number(a.score)) ? -1 : Number(a.score);   /* 让 ｢非百分制｣ 的排序值最小 (为 -1) */
-    let vb = isNaN(Number(b.score)) ? -1 : Number(b.score);   /* 让 ｢非百分制｣ 的排序值最小 (为 -1) */
-    return vb - va;
+    let va = score2sortVal(a);
+    let vb = score2sortVal(b);
+    if (va !== vb) {
+      return vb - va;
+    } else {
+      return Number(a.name < b.name) - 0.5;   // bool --> {0 或 1}, 这里减去 0.5 则得到 {-0.5 或 +0.5}
+    }
   });
 
   // 计算这个学期的课程数、有效学分数、平均 GPA

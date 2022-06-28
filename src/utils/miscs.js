@@ -81,3 +81,21 @@ export function coursesGroupBySemester(course_infos) {
     course_infos: course_infos.filter(info => info.semester.join("-") === sem_name),
   }));
 }
+
+export function score2sortVal(course_info) {
+  // 1. 百分制成绩 => Number()
+  // 3. 非百分制成绩 => 认为 P > EX > I > NP > F > W, 分别赋予 -1, -2, -3, -4, -5, -6
+  let score = Number(course_info.score);
+  if (isNaN(score)) {
+    switch (course_info.score) {
+      case "P":  return -1;
+      case "EX": return -2;
+      case "I":  return -3;
+      case "NP": return -4;
+      case "F":  return -5;
+      case "W":  return -6;
+    }
+  }
+  return score;
+}
+
