@@ -111,7 +111,7 @@
     margin: auto;
     padding-top: 2rem;
     padding-bottom: 1rem;
-    box-shadow: 0 0 10px #3333;
+    border-radius: 5px;
     box-sizing: border-box;
     max-width: var(--grade-book-max-width);
     text-shadow: 0 0 3px white;
@@ -119,7 +119,7 @@
 .course-row,
 .semester-row {
     background-color: #eff;
-    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
     display: flex;
     padding: 0.2rem;
 }

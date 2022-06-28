@@ -25,7 +25,7 @@ function BottomBar() {
     <div id={"bottom-bar"}>
       <div> ️⚠︎ 本页面结果仅供参考, 请以学校官方结果为准! </div>
       <div> 绩点公式: GPA(x) = 4 - 3(100 - x)² / 1600 </div>
-      <div> ️基于 GPLv3 协议在 <a href="https://github.com/PkuCuipy/gpa-simulator" style={{color: "inherit"}}> GitHub</a> 开源 </div>
+      <div> ️基于 GPLv3 协议在 <a href="https://github.com/PkuCuipy/gpa-simulator" style={{color: "inherit"}} target="_blank" rel="noreferrer"> GitHub</a> 开源 </div>
     </div>
   );
 }
@@ -61,7 +61,8 @@ function Importer(props) {
             复制 <strong>树洞 User Token</strong> 并粘贴到下方； </div>
           <div>
             <strong> • 方式2: </strong>
-            访问 <a style={{textDecoration: "none", fontWeight: "Bold"}} href="https://pkuhelper.pku.edu.cn/my_score/">PKU Helper 成绩查询页</a>，全选并复制<strong>整个页面</strong>；
+            访问 <a style={{textDecoration: "none", fontWeight: "Bold"}} href="https://pkuhelper.pku.edu.cn/my_score/" target="_blank" rel="noreferrer">
+            PKU Helper 成绩查询页</a>，全选并复制<strong>整个页面</strong>；
           </div>
           <div>
             <strong> • 方式3: </strong>
@@ -149,8 +150,8 @@ function SemesterRow(props) {
         <span className={"down"}> 共 {props.semesterInfo.num_courses} 门课程 </span>
       </span>
       <span className={"right"}>
-        <span className={"up"}> {props.semesterInfo.avg_gpa.toFixed(3)} </span>
-        <span className={"down"}> (折合 {gpa2score_printable(props.semesterInfo.avg_gpa)}) </span>
+        <span className={"up"}> {Number.isNaN(props.semesterInfo.avg_gpa) ? "-.---" :  props.semesterInfo.avg_gpa.toFixed(3)} </span>  {/* 如果是 NaN, 则更友好地显示为 -.--- */}
+        <span className={"down"}> (折合 { Number.isNaN(props.semesterInfo.avg_gpa) ? "--.-" :  gpa2score_printable(props.semesterInfo.avg_gpa)}) </span>  {/* 如果是 NaN, 则更友好地显示为 -.--- */}
       </span>
     </div>
   );
@@ -259,8 +260,8 @@ function Summary(props) {
             {[...Array(all_semester.length).keys()].map(i =>
               <tr key={i}>
               <td style={{ backgroundColor: "#dfd"}}> {`${all_semester[i][0]}年第${all_semester[i][1]}学期`}</td>
-              <td style={{ backgroundColor: hsl2hslprintable(score2hsl(gpa2score(all_gpa[i]))) }}> {all_gpa[i].toFixed(3)} </td>
-              <td style={{ backgroundColor: hsl2hslprintable(score2hsl(gpa2score(all_accumulatedGPA[i]))) }}> {all_accumulatedGPA[i].toFixed(3)} </td>
+              <td style={{ backgroundColor: hsl2hslprintable(score2hsl(gpa2score(all_gpa[i]))) }}>{ Number.isNaN(all_gpa[i]) ? "-.---" : all_gpa[i].toFixed(3) }</td> {/* 如果是 NaN, 则更友好地显示为 -.--- */}
+              <td style={{ backgroundColor: hsl2hslprintable(score2hsl(gpa2score(all_accumulatedGPA[i]))) }}>{ Number.isNaN(all_accumulatedGPA[i]) ? "-.---" : all_accumulatedGPA[i].toFixed(3) }</td> {/* 如果是 NaN, 则更友好地显示为 -.--- */}
             </tr>)}
           </tbody>
         </table>
