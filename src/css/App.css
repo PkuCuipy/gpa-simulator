@@ -191,6 +191,18 @@
     box-shadow: 0 0 0.4rem #000c;
 }
 
+/* 以下 rainbow-moving 部分照搬 PKU Helper 的 CSS */
+@keyframes rainbow-moving {
+    0% {background-position-x: 0;}
+    100% {background-position-x: -1000px;}
+}
+.rainbow-moving {
+    background: linear-gradient(-45deg,#c5fcc5,#ffd1d1,#d1d1ff,#c5fcc5,#ffd1d1,#d1d1ff,#c5fcc5,#ffd1d1,#d1d1ff,#c5fcc5,#ffd1d1,#d1d1ff,#c5fcc5) 0 0;
+    background-size: 1800px 200px !important;
+    animation: rainbow-moving 5s linear infinite;
+}
+
+
 /* 简洁模式的一种实现方式 (暂不打算使用) */
 /*.course-row .down {display: none;}*/
 /*.semester-chunk {margin-bottom: 3rem;}*/

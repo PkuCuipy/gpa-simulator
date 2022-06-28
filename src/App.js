@@ -158,13 +158,12 @@ function CourseRow(props) {
   let p = score2proportion(props.courseInfo.score);
 
   return (
-    <div className={"course-row"} style={{
-      // background: `linear-gradient(to right, rgb(255, 242, 128) 0%, rgb(255, 240, 102) 45%, rgb(219, 209, 112) 45%)`
-      background: `linear-gradient(to right, 
-                                    hsl(${h}, ${s}%, ${l}%) 0%, 
-                                    hsl(${h}, ${s}%, ${l}%) ${p}%, 
-                                    hsl(${h}, ${s * 0.8}%, ${l * 1.1}%) ${p}%)`
-    }}>
+    <div
+      className={"course-row" + (Number(props.courseInfo.score) === 100 ? " rainbow-moving" : "")    /* 如果是 100 分, 则添加一个实现彩虹色的 class */}
+      style={ Number(props.courseInfo.score) === 100 ? {} :
+             { background: `linear-gradient(to right, hsl(${h}, ${s}%, ${l}%)               ${0}%, 
+                                                      hsl(${h}, ${s}%, ${l}%)               ${p}%, 
+                                                      hsl(${h}, ${s * 0.8}%, ${l * 1.1}%)   ${p}%)` }}>
       <span className={"left"}>
         <span className={"up"}> {props.courseInfo.credit} </span>
         <span className={"down"}> 学分 </span>
