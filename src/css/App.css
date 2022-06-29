@@ -1,7 +1,7 @@
 :root {
     --max-width: 750px;
     --grade-book-max-width: 850px;
-    --modal-width: 500px;
+    --modal-width: 450px;
     --modal-width-phone: 200px;
 }
 
@@ -267,20 +267,22 @@
 #add-course-inputs {
     display: grid;
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr 0.5fr;
-    grid-template-columns: 0.5fr 2fr 3.2fr 0fr;
+    grid-template-columns: 0.6fr 2.5fr 2.5fr 0fr;
     align-items: center;
 }
 #add-course-inputs input {
     margin: 0.3rem;
 }
-
+#add-course .hint {
+    font-size: 0.8rem;
+    color: #cde;
+}
 @media (max-width: 500px) {
     #add-course {
         width: 300px;
         background-color: rgba(0, 0, 0, 0.9);
     }
     #add-course .hint {
-        /*display: none;*/
         font-size: 0.5rem;
     }
     #add-course-inputs input {

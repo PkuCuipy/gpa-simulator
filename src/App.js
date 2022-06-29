@@ -6,7 +6,13 @@ import random_icon from "./icons/dice.svg";
 import { calcAvgGPA, coursesGroupBySemester, gpa2score, gpa2score_printable, score2gpa_printable, score2sortVal, isValidScore, nextUniqueId, } from "./utils/miscs.js";
 import { hsl2hslprintable, score2hsl, score2proportion } from "./utils/color.js";
 import { seemsByPageCopy, parseCourseInfoAll } from "./utils/from-paste.js";
-import { randomGenerateSomeCourseInfo } from "./utils/random-generate.js";
+import {
+  randomGenerateSomeCourseInfo,
+  random_course_name,
+  random_credit,
+  random_score,
+  nowSemester
+} from "./utils/random-generate.js";
 import { seemsLikeToken, fetchCourseInfoAll } from "./utils/from-api.js";
 
 
@@ -62,7 +68,7 @@ function Importer(props) {
           <div>
             <strong> • 方式2: </strong>
             访问 <a style={{textDecoration: "none", fontWeight: "Bold"}} href="https://pkuhelper.pku.edu.cn/my_score/" target="_blank" rel="noreferrer">
-            PKU Helper 成绩查询页</a>，全选并复制<strong>整个页面</strong>；
+            PKU Helper 成绩查询页</a>，全选并复制<strong>整个页面</strong>，粘贴到下方；
           </div>
           <div>
             <strong> • 方式3: </strong>
@@ -84,7 +90,7 @@ function GradeBook(props) {
         {semester_infos.map(info =>
           <SemesterChunk
             courseInfos={info.course_infos}
-            semesterName={`${info.semester[0]}学年 第${info.semester[1]}学期`}
+            semesterName={`${String(info.semester[0]).padStart(2, "0")}学年 第${info.semester[1]}学期`}
             changeScoreOfCourse={props.changeScoreOfCourse}
             key={info.semester}
           />
@@ -278,11 +284,11 @@ function AddCourseModal(props) {
       <div id={"add-course"}>
         <div style={{fontSize: "1.2rem", fontWeight: "bold"}}> 添加一门课程 </div><br></br>
         <div id={"add-course-inputs"}>
-          <span>学年: </span> <input defaultValue={"23"}/> <span className={"hint"}>&nbsp;&nbsp;(必填, 例如: 19, 20, ...) </span><br/>
-          <span>学期: </span> <input defaultValue={"3"}/> <span className={"hint"}>&nbsp;&nbsp;(必填, 例如: 1, 2, 3) </span><br/>
-          <span>课名: </span> <input defaultValue={"划水学导论"}/> <span className={"hint"}>&nbsp;&nbsp;(必填, 例如: Rust程序设计) </span><br/>
-          <span>学分: </span> <input defaultValue={"3"}/> <span className={"hint"}>&nbsp;&nbsp;(必填, 例如: 1, 2, ...) </span><br/>
-          <span>成绩: </span> <input defaultValue={"84"}/> <span className={"hint"}>&nbsp;&nbsp;(必填, 例如: 59, 84, 100, P, F, W, ...) </span><br/>
+          <strong>学年: </strong> <input defaultValue={nowSemester()[0]}/> <span className={"hint"}>（00, 01, ..., 99）</span><br/>
+          <strong>学期: </strong> <input defaultValue={String(nowSemester()[1]).padStart(2, "0")}/> <span className={"hint"}>（1, 2, 3）</span><br/>
+          <strong>课名: </strong> <input defaultValue={random_course_name()}/> <span className={"hint"}> </span><br/>
+          <strong>学分: </strong> <input defaultValue={random_credit()}/> <span className={"hint"}>（≥ 1 的整数）</span><br/>
+          <strong>成绩: </strong> <input defaultValue={random_score()}/> <span className={"hint"}>（如：59，84，P，W，...）</span><br/>
         </div>
         <Button name={"✅ 确认添加"} onClick={() => {
           // 判断输入是否合法
@@ -457,7 +463,7 @@ class App extends Component{
       });
     }
     else {
-      alert("无法识别您粘贴的内容w 请仔细阅读说明后重试🥺")
+      alert("无法识别您粘贴的内容w 请仔细阅读 [导入指南] 后重试🥺")
     }
 
     this.clearPasteArea();
