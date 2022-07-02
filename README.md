@@ -6,8 +6,11 @@ PKU Helper 成绩查询复刻增强版.
 - **源代码**: https://github.com/PkuCuipy/gpa-simulator
 - **构建版本**: https://pkucuipy.github.io/gpa-simulator-build 
 
----
 
+<br>
+
+
+# 用户手册
 ## 成绩导入
 
 当第一次访问页面时, 需要选择一种方式导入成绩单.
@@ -79,17 +82,17 @@ PKU Helper 成绩查询复刻增强版.
 
 ```Sh
 ./src
-├── App.js					# 1. 主要界面的构建 (React JSX)
+├── App.js			# 1. 主要界面的构建 (React JSX)
 ├── css					
-│   ├── App.css				# 2. 主要组件的 CSS
+│   ├── App.css			# 2. 主要组件的 CSS
 │   └── index.css
 ├── icons/				
 ├── index.js			
 └── utils
-    ├── color.js			# 3. 成绩单 ｢染色逻辑｣
-    ├── from-api.js			# 4. 基于 ｢User Token｣ 的 ｢成绩导入｣
+    ├── color.js		# 3. 成绩单 ｢染色逻辑｣
+    ├── from-api.js		# 4. 基于 ｢User Token｣ 的 ｢成绩导入｣
     ├── from-paste.js		# 5. 基于 ｢粘贴 DOM｣ 的 ｢成绩导入｣
-    ├── miscs.js			# 6. 绩点计算、成绩转换等
+    ├── miscs.js		# 6. 绩点计算、成绩转换等
     └── random-generate.js	# 7. ｢随机生成成绩单｣ 的模块
 ```
 
@@ -142,7 +145,7 @@ PKU Helper 成绩查询复刻增强版.
     background: linear-gradient(-45deg,
         #c5fcc5,#ffd1d1,#d1d1ff,#c5fcc5,#ffd1d1,
         #d1d1ff,#c5fcc5,#ffd1d1,#d1d1ff,#c5fcc5,
-        #ffd1d1,#d1d1ff,#c5fcc5) 0 0;				/* 通过 linear-gradient 定义了彩色条带 */
+        #ffd1d1,#d1d1ff,#c5fcc5) 0 0;			/* 通过 linear-gradient 定义了彩色条带 */
     background-size: 1800px 200px !important;
     animation: rainbow-moving 5s linear infinite;	/* 配合 @keyframes 实现彩虹移动效果 */
 }
@@ -177,19 +180,17 @@ PKU Helper 成绩查询复刻增强版.
     score: "课程成绩",
     original_score: "未修改的课程成绩",
     semester: "[学期年份, 学期编号]",
-	unique_id: "全局唯一标识码",
+    unique_id: "全局唯一标识码",
 }
 ```
 
 ## 生成课程信息
 
 - 学分和成绩的生成方法就是对 `Math.random()` 的简单封装 (分别对应 `randint` 和 `random_choice` 函数).
-
 - **课程名的生成**并未用到高深的 ML/NLP 方法, 而是基于人工规则进行的:
   - 首先准备一些**前缀名** `prefixes`, 包括 `大学`、`公共`、`普通` 等等;
   - 然后准备一些**学科名** `concepts`, 包括 `数学`、`物理学`、`哲学` 等等;
   - 然后定义**关联词** `connectives` 和**后缀名** `suffixes`;
   - 最后基于生成模式: `prefix concept (connective concept)? suffix` 进行生成.
-
 - 如此, 可以随机生成 ｢乍一看还算合理｣ 的课程名.
 - 见函数 `random_course_name()`.
