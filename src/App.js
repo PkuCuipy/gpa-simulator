@@ -61,18 +61,31 @@ function Importer(props) {
   return (
     <div id={"importer"}>
       <div id={"import-prompt"}>
-        <div style={{fontSize: "1.15rem", fontWeight: "Bold", marginBottom: "0.2rem", textShadow: "0 0 1rem white"}}> 成绩导入指南 </div>
+        <div style={{fontSize: "1.25rem", fontWeight: "Bold", marginTop: "0.5rem", marginBottom: "0.5rem", textShadow: "0 0 1rem white"}}> 开始使用 </div>
           <div>
-            <strong> • 方式1: </strong>
-            复制 <strong>树洞 User Token</strong> 并粘贴到下方； </div>
-          <div>
-            <strong> • 方式2: </strong>
-            访问 <a style={{textDecoration: "none", fontWeight: "Bold"}} href="https://pkuhelper.pku.edu.cn/my_score/" target="_blank" rel="noreferrer">
-            PKU Helper 成绩查询页</a>，全选并复制<strong>整个页面</strong>，粘贴到下方；
+            <strong>【方式一】</strong>
+            <button onClick={props.onRandomGenerate}> 🎲 点击这里 </button> <strong>随机生成</strong>一份成绩单
           </div>
           <div>
-            <strong> • 方式3: </strong>
-            <button onClick={props.onRandomGenerate}> 🎲 点击这里 </button> <strong>随机生成</strong>一份成绩单；
+            <strong>【方式二】</strong>
+            <button onClick={props.onCreateBlank}>➕新建成绩单</button> 创建一份空白成绩单
+          </div>
+          <div>
+            <strong>【方式三】导入官方成绩单：</strong>
+            访问北大树洞<a style={{textDecoration: "none", fontWeight: "Bold"}} href="https://treehole.pku.edu.cn/web/webscore" target="_blank" rel="noreferrer">
+            成绩查询页</a>，<strong>全选并复制整个页面</strong>，粘贴到下方：
+            <br/>
+            <strong>【无法复制？】</strong>
+            <div style={{padding: "0 2rem"}}><u><em>
+              • 解决方法：刷新成绩单页面后，再全选复制。<br/>
+              • 原理：新 qy 树洞的成绩单页面限制了页面上文字的复制功能。但截至目前（2024/06），这个限制是存在 Bug 的——当页面刷新后，这个限制就会被解除。当然这个 Bug 可能随时被 qy 团队修复，届时需要通过在开发者工具中禁用 ”user-select: none“ 来解除限制。
+            </em></u></div>
+          </div>
+          <div>
+            <br/>
+            <strong>2024/06/21 注: </strong><br/>
+            作者本人已从 P 大毕业，无法继续访问成绩查询页，因而无法继续维护。<br/>
+            欢迎贡献<a href="https://github.com/PkuCuipy/gpa-simulator" target="_blank" rel="noreferrer">本仓库</a>，作者会尽己所能提供帮助。
           </div>
       </div>
       <div id={"paste-here"} contentEditable={"true"} onInput={props.onPaste}>
@@ -406,6 +419,16 @@ class App extends Component{
     this.openAddCourseModal();
   }
 
+  /* 当用户点击 ｢创建空成绩单｣ 按钮时的行为 */
+  handleCreateBlank = () => {
+    if (this.state.need_initial_import || window.confirm("您确定要创建一份空白的成绩单吗? 这将丢失您当前页面的所有修改!")) {
+      this.setState({
+        course_infos: [],
+        need_initial_import: false,
+      });
+    }
+  }
+
   /* 当用户点击 ｢随机生成｣ 按钮时的行为 */
   handleRandomGenerate = () => {
     if (this.state.need_initial_import || window.confirm("您确定要随机生成一份成绩单吗? 这将丢失您当前页面的所有修改!")) {
@@ -441,7 +464,8 @@ class App extends Component{
                                         // 判断 ｢导入方式｣
 
     const inner_text = elem.innerText.trim();
-    if (seemsLikeToken(inner_text)) { // 1. 粘贴的是 ｢token｣ 类似物
+    if (false &&  // fixme: qy 树洞已经不存在以前 PKU Helper 时代的 token 了，新的 token 规则本人并不知晓。——2024-06-22 注
+      seemsLikeToken(inner_text)) { // 1. 粘贴的是 ｢token｣ 类似物
       const token = inner_text;
       fetchCourseInfoAll(token, (infos) => {
         console.log("utils:", infos);
@@ -495,12 +519,14 @@ class App extends Component{
         />
         {this.state.need_initial_import
           ? <Importer onPaste={this.handlePaste}
+                      onCreateBlank={this.handleCreateBlank}
                       onRandomGenerate={this.handleRandomGenerate}/>
           : <>
             <GradeBook courseInfos={this.state.course_infos}
                        changeScoreOfCourse={this.changeScoreOfCourse}/>
             <Summary courseInfos={this.state.course_infos}/>
           </>}
+        <br/>
         <BottomBar/>
       </>
     );

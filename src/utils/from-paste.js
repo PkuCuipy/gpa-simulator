@@ -18,19 +18,27 @@ export function parseCourseInfoAll(DOMElem) {
   let course_infos = [];
   let semester_blocks = [...DOMElem.getElementsByClassName("semester-block")];
   for (let block of semester_blocks.slice(0, -1)) {   /* 最后一项是 "总绩点", 不是一个 "学期", 因此丢掉 */
-    let semester_name = getDOMChild(block, [0,0,1,0,0,0]).innerText;
+    console.log("b", block);
+    let semester_name = getDOMChild(block, [0,0,1,0,0]).innerText;
+    console.log("semester_name", semester_name);
     if (semester_name === "新增成绩") {
       continue;   // 防止用户输入中有 ｢新增成绩｣ 尚未 ｢已阅｣
     }
     let course_rows = block.getElementsByClassName("course-row");
     for (let row of course_rows) {
-      let name = getDOMChild(row, [0,1,0,0,0,0]).innerText;
+      let name = getDOMChild(row, [0,1,0,0,0]).innerText;
+      // console.log("name", name);
       let semester = semester_name.match(/(\d+)学年 第(\d+)学期/).slice(1, 3).map(Number);     // "19学年 第2学期" --> [19, 2]
-      let credit = Number(getDOMChild(row, [0,0,0,0,0]).innerText);
-      let score = row.getElementsByClassName("score-tamperer")[0].value;
-      let type_teacher = getDOMChild(row, [0,1,0,0,1]).innerText.split("-");
+      let credit = Number(getDOMChild(row, [0,0,0,0]).innerText);
+      // console.log("credit", credit);
+      let score = Number(getDOMChild(row, [0,2,0,0]).innerText);
+      // console.log("score", score);
+      let type_teacher = getDOMChild(row, [0,1,0,1]).innerText.split("-");
+      // console.log("type_teacher", type_teacher);
       let type = type_teacher[0].trim();
+      // console.log("type", type);
       let teacher = type_teacher[1].trim();
+      // console.log("teacher", teacher);
       let course_info = {
         is_user_created: false,
         unique_id: nextUniqueId(),

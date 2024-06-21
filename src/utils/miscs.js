@@ -31,7 +31,7 @@ export function calcAvgGPA(course_infos) {
       else if (info.score === "NP") { }
       else if (info.score === "I") { }
       else if (info.score === "EX") { }
-      else { throw Error("无法解析成绩"); }
+      else { console.log("无法解析成绩! 注意——仅支持本科生成绩单——什么？您是本科生仍遇到此报错？请联系作者！") }
     }
     else {
       if (score >= 60 && score <= 100) {
