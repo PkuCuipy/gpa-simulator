@@ -1,29 +1,28 @@
-# GPA Simulator (绩点模拟器, GS)
+## GPA Simulator (绩点模拟器, GS)
 
 PKU Helper 成绩查询复刻增强版.
 
 - **复刻**了 PKU Helper [*成绩查询*](https://pkuhelper.pku.edu.cn/my_score/) 的基本功能, 并**增强**其成绩模拟的能力, 包括新增课程、往期绩点回溯等功能.
 - **源代码**: https://github.com/PkuCuipy/gpa-simulator
-- **构建版本**: https://pkucuipy.github.io/gpa-simulator-build 
-
+- **构建版本**: https://pkucuipy.github.io/gpa-simulator 
 
 <br>
 
+## 用户手册
 
-# 用户手册
-## 成绩导入
+### 成绩导入
 
-当第一次访问页面时, 需要选择一种方式导入成绩单.
+**作者注：由于树洞改版，此部分信息已过时，请以构建版本的行为为准。**
 
-- 在方式一中, `GS` 会使用 User Token 构建 URL 并直接从学校服务器获取成绩数据.
-- 在方式二中, `GS` 会解析用户粘贴的网页的 `DOM` 结构, 从中解析出每门课程的数据.
-- 在方式三中, `GS` 会**随机生成**一份成绩单, 其中的课程名、成绩等均是随机生成的. 
+> 当第一次访问页面时, 需要选择一种方式导入成绩单.
+>
+> - 在方式一中, `GS` 会使用 User Token 构建 URL 并直接从学校服务器获取成绩数据.
+> - 在方式二中, `GS` 会解析用户粘贴的网页的 `DOM` 结构, 从中解析出每门课程的数据.
+> - 在方式三中, `GS` 会**随机生成**一份成绩单, 其中的课程名、成绩等均是随机生成的. 
+>   若仅作功能体验, 请以 ｢**方式三**｣ 继续.
+>
 
-<img src="imgs/image-20220701163623140.png" alt="image-20220701163623140" style="zoom:30%;" />
-
-> 若仅作功能体验, 请以 ｢**方式三**｣ 继续.
-
-## 成绩渲染
+### 成绩渲染
 
 `GS` 的成绩单复刻了 PKU Helper 的设计风格.
 课程会按照学期进行分块, 并按照成绩高低进行排序, 并由高至低依次用**绿色到红色**进行显示, 并对满分成绩以**流动彩虹色**标识.
@@ -33,20 +32,20 @@ PKU Helper 成绩查询复刻增强版.
 另外, 它将每门课的百分制成绩折合为 `[1.0, 4.0]` 的绩点表示, 
 并为每个学期计算平均绩点, 再折合为百分制表示. 
 
-## 成绩修改
+### 成绩修改
 
 点击百分制成绩时, 即可进入成绩编辑状态. 
 可以修改为任何合法的成绩, 比如 `[0, 100]` 的实数, 或者 `W`(表示退课)、`P`(表示通过)、`IX`(表示免修) 等等.
 
 ![image-20220701165154092](imgs/image-20220701165154092.png)
 
-## 总结区
+### 总结区
 
 这一部分呈现了用户成绩单的总体统计信息. 除了将成绩单中的 ｢当期绩点｣ 汇总在一起之外, 还回溯推演了 ｢累计绩点｣.
 
 <img src="imgs/image-20220701165635718.png" alt="image-20220701165635718" style="zoom:30%;" />
 
-## 添加课程
+### 添加课程
 
 在成绩页面顶栏有三个按键, 这里介绍中间按钮的功能. (这三个功能也可通过快捷键 `F1~F3` 触发).
 
@@ -69,14 +68,14 @@ PKU Helper 成绩查询复刻增强版.
 
 <img src="imgs/image-20220701172210503.png" alt="image-20220701172210503" style="zoom:40%;" />
 
-## 删除课程
+### 删除课程
 
 `GS` 目前**没有** *显式的* `删除课程` 的功能. 
 可以通过将相应课程成绩修改为 `W` (退课), 在 *逻辑上* 删除这门课.
 
 ---
 
-# 实现相关
+## 实现相关
 
 源码结构如下, 文件主要功能如右侧标注:
 
@@ -96,7 +95,7 @@ PKU Helper 成绩查询复刻增强版.
     └── random-generate.js	# 7. ｢随机生成成绩单｣ 的模块
 ```
 
-## 主要界面
+### 主要界面
 
 `App.js` 文件中以  `JSX` 语法构建了整个 `GS` 的用户界面, 包括交互设计、事件处理等.
 整个 `GS` 被抽象为一个 `App` 组件, `App` 组件又由以下 6 个组件组成:
@@ -116,7 +115,7 @@ PKU Helper 成绩查询复刻增强版.
 - `Summary` 对应于底部总结区的表格的 UI;
 - `AddCourseModal` 对应于添加课程时的弹出窗口.
 
-## 弹出窗口的实现
+### 弹出窗口的实现
 
 ｢全屏显示在顶层｣ 使用到的属性主要包括:
 
@@ -133,7 +132,7 @@ PKU Helper 成绩查询复刻增强版.
 
 ｢隐藏弹出窗口｣ 使用了 `display: none` 的 Trick, 而非从 DOM 中移除这一元素.
 
-## 成绩单染色
+### 成绩单染色
 
 使用了 HSL 色彩空间实现渐变和过渡.
 定义了 100 分的 HSL 颜色和 60 分的 HSL 颜色后, 其余的分数只需要对 `H` 分量 (Hue) 进行线性插值.
@@ -155,13 +154,16 @@ PKU Helper 成绩查询复刻增强版.
 }
 ```
 
-## 基于 User Token 的成绩导入
+### 基于 User Token 的成绩导入
 
-- PKU Helper 从学校官方获取成绩单的 API 为:`https://pkuhelper.pku.edu.cn/api_xmcp/isop/scores?user_token=${token}`, 这里 `user_token` 是 PKU Helper 的通用验证 token, 可以从 [树洞](https://pkuhelper.pku.edu.cn/hole/) 中复制.
-- 这个 API 是 `Access-Control-Allow-Origin: *` 的, 允许跨域, 因此可以直接使用 `XMLHttpRequest` 异步获取数据后再在回调函数中解析 JSON 即可.
-- 见函数 `fetchCourseInfoAll()`.
+**作者注：由于树洞改版，此部分信息已过时，请以构建版本的行为为准。**
 
-## 基于 DOM 的成绩导入
+> - PKU Helper 从学校官方获取成绩单的 API 为:`https://pkuhelper.pku.edu.cn/api_xmcp/isop/scores?user_token=${token}`, 这里 `user_token` 是 PKU Helper 的通用验证 token, 可以从 [树洞](https://pkuhelper.pku.edu.cn/hole/) 中复制.
+> - 这个 API 是 `Access-Control-Allow-Origin: *` 的, 允许跨域, 因此可以直接使用 `XMLHttpRequest` 异步获取数据后再在回调函数中解析 JSON 即可.
+> - 见函数 `fetchCourseInfoAll()`.
+>
+
+### 基于 DOM 的成绩导入
 
 - `Importer` 本质上是一个 `contenteditable` 的 `div`.
 - 当用户全选官方成绩单页面并粘贴后, 这个 `div` 里会得到一棵完整的 `DOM` 树, 这正是 PKU Helper 成绩查询页面的 DOM.
@@ -169,7 +171,7 @@ PKU Helper 成绩查询复刻增强版.
 - 解析的过程比较繁琐, 思路就是先在 Developer Tools 中观察并记下每个数据的 CSS Selector, 然后编写 JS 自动提取. 
 - 见函数 `parseCourseInfoAll()`.
 
-## 数据结构
+### 数据结构
 
 导入的成绩信息组织成 ｢课程信息｣ 的 Array, 其中 ｢课程信息｣ 是一个 Object, 具有如下字段:
 
