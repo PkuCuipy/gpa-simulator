@@ -9,3 +9,14 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+@media (max-width: 450px) {
+  html {
+    font-size: 0.9rem;
+  }
+
+  #import-prompt {
+    padding-left: 0.8rem !important;
+    padding-right: 0.8rem !important;
+  }
+}

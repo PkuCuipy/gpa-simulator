@@ -76,16 +76,17 @@ function Importer(props) {
             成绩查询页</a>，<strong>全选并复制整个页面</strong>，粘贴到下方：
             <br/>
             <strong>【无法复制？】</strong>
-            <div style={{padding: "0 2rem"}}><u><em>
-              • 解决方法：刷新成绩单页面后，再全选复制。<br/>
-              • 原理：新 qy 树洞的成绩单页面限制了页面上文字的复制功能。但截至目前（2024/06），这个限制是存在 Bug 的——当页面刷新后，这个限制就会被解除。当然这个 Bug 可能随时被 qy 团队修复，届时需要通过在开发者工具中禁用 ”user-select: none“ 来解除限制。
-            </em></u></div>
+            <div style={{paddingLeft: "0.8rem", fontSize: "1rem", lineHeight: "1.3rem"}}>
+              1. 请使用<strong>电脑端</strong>网页，其余设备作者未测试过。<br/>
+              2. 请刷新<strong>树洞成绩查询页</strong>后，再尝试全选复制。<br/>
+              3. 若仍无法复制，请尝试禁用 <code>user-select: none</code>，或考虑<a href="https://github.com/PkuCuipy/gpa-simulator" target="_blank" rel="noreferrer">贡献本仓库</a>。
+            </div>
           </div>
           <div>
-            <br/>
-            <strong>2024/06/21 注: </strong><br/>
-            作者本人已从 P 大毕业，无法继续访问成绩查询页，因而无法继续维护。<br/>
-            欢迎贡献<a href="https://github.com/PkuCuipy/gpa-simulator" target="_blank" rel="noreferrer">本仓库</a>，作者会尽己所能提供帮助。
+            <strong>【2024/06 注】</strong><br/>
+            <div style={{paddingLeft: "0.8rem", fontSize: "1rem", lineHeight: "1.3rem"}}>
+              作者本人已从 P 大毕业，无权继续访问成绩查询页，因此无法保证本站对官方成绩单查询页的长期兼容。欢迎贡献<a href="https://github.com/PkuCuipy/gpa-simulator" target="_blank" rel="noreferrer">本仓库</a>，作者会尽己所能提供帮助。
+            </div>
           </div>
       </div>
       <div id={"paste-here"} contentEditable={"true"} onInput={props.onPaste}>
