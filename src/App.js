@@ -98,7 +98,7 @@ function Importer(props) {
 /* ------------------------------ 成绩单 ------------------------------ */
 function GradeBook(props) {
   // Grouped by ｢学期名｣
-  const semester_infos = coursesGroupBySemester(props.courseInfos);
+  const semester_infos = coursesGroupBySemester(props.courseInfos).reverse();
   return (
       <div id={"grade-book"}>
         {semester_infos.map(info =>
@@ -351,7 +351,7 @@ function AddCourseModal(props) {
         }}/>
 
         <Button name={"❌ 取消添加 (Esc)"} onClick={props.closeModal}/>
-        
+
         <span id={"add-course-error-msg"} style={{color: "#faa", textShadow: "0 0 0.5rem #faa4"}}>️ </span>
       </div>
     </div>
