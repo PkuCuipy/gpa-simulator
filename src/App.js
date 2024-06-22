@@ -40,11 +40,16 @@ function BottomBar() {
 /* ------------------------------ 设置 ------------------------------ */
 function Settings(props) {
   return (
+    <>
     <div id={"settings"}>
       <Button name={"返回导入成绩界面 (F1)"} icon={back_icon} onClick={props.onClickImport}/>
       <Button name={"添加一门新的课程 (F2)"} icon={add_icon} onClick={props.onNewCourse}/>
       <Button name={"随机生成成绩单 (F3)"} icon={random_icon} onClick={props.onRandomGenerate}/>
     </div>
+    <div style={{textAlign: "center", color: "gold", fontSize: "0.95rem", textShadow: "0 0 0.2rem #33bbcc55"}}>
+      <strong>提示：“修改成绩” 请点击每行右侧的成绩数字，即可进行编辑</strong>
+    </div>
+    </>
   )
 }
 
