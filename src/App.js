@@ -32,6 +32,7 @@ function BottomBar() {
       <div> ️⚠︎ 本页面结果仅供参考, 请以学校官方结果为准! </div>
       <div> 绩点公式: GPA(x) = 4 - 3(100 - x)² / 1600 </div>
       <div> ️基于 GPLv3 协议在 <a href="https://github.com/PkuCuipy/gpa-simulator" style={{color: "inherit"}} target="_blank" rel="noreferrer"> GitHub</a> 开源 </div>
+      <div style={{textAlign: "right"}}>访问量统计: <img style={{verticalAlign: "middle"}} class="statcounter" src="https://c.statcounter.com/13010450/0/356f82fc/0/" alt="Web Analytics" referrerPolicy="no-referrer-when-downgrade"></img></div>
     </div>
   );
 }
