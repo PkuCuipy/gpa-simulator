@@ -79,7 +79,7 @@ function Importer(props) {
             <div style={{paddingLeft: "0.8rem", fontSize: "1rem", lineHeight: "1.3rem"}}>
               1. 请使用<strong>电脑端</strong>网页，其余设备作者未测试过。<br/>
               2. 请刷新<strong>树洞成绩查询页</strong>后，再尝试全选复制。<br/>
-              3. 若仍无法复制，请尝试禁用 <code>user-select: none</code>，或考虑<a href="https://github.com/PkuCuipy/gpa-simulator" target="_blank" rel="noreferrer">贡献本仓库</a>。
+              3. 若仍无法复制，请尝试<strong>禁用</strong> <code>user-select: none</code>。
             </div>
           </div>
           <div>
