@@ -1,5 +1,5 @@
 import "./css/App.css";
-import { Component } from "react";
+import { Component, useState } from "react";
 import back_icon from "./icons/back.svg";
 import add_icon from "./icons/add.svg";
 import random_icon from "./icons/dice.svg";
@@ -293,17 +293,25 @@ function Summary(props) {
 
 /* ------------------------------ ｢添加课程｣ 弹窗 ------------------------------ */
 function AddCourseModal(props) {
+  const hintYear = String(nowSemester()[0]).padStart(2, "0");
+  const hintWhich = nowSemester()[1];
+
+  const [hintName, setHintName] = useState(random_course_name());
+  const [hintCredit, setHintCredit] = useState(random_credit());
+  const [hintScore, setHintScore] = useState(random_score());
+
   return (
     <div id={"add-course-modal"} className={"modal"}>
       <div id={"add-course"}>
         <div style={{fontSize: "1.2rem", fontWeight: "bold"}}> 添加一门课程 </div><br></br>
         <div id={"add-course-inputs"}>
-          <strong>学年: </strong> <input defaultValue={nowSemester()[0]}/> <span className={"hint"}>（00, 01, ..., 99）</span><br/>
-          <strong>学期: </strong> <input defaultValue={String(nowSemester()[1]).padStart(2, "0")}/> <span className={"hint"}>（1, 2, 3）</span><br/>
-          <strong>课名: </strong> <input defaultValue={random_course_name()}/> <span className={"hint"}> </span><br/>
-          <strong>学分: </strong> <input defaultValue={random_credit()}/> <span className={"hint"}>（≥ 1 的整数）</span><br/>
-          <strong>成绩: </strong> <input defaultValue={random_score()}/> <span className={"hint"}>（如：59，84，P，W，...）</span><br/>
+          <strong>学年: </strong> <input defaultValue={hintYear}/> <span className={"hint"}>（00, 01, ..., 99）</span><br/>
+          <strong>学期: </strong> <input defaultValue={hintWhich}/> <span className={"hint"}>（1, 2, 3）</span><br/>
+          <strong>课名: </strong> <input defaultValue={hintName} key={hintName}/> <span className={"hint"}> </span><br/>
+          <strong>学分: </strong> <input defaultValue={hintCredit} key={hintCredit}/> <span className={"hint"}>（≥ 1 的整数）</span><br/>
+          <strong>成绩: </strong> <input defaultValue={hintScore} key={hintScore}/> <span className={"hint"}>（如：59，84，P，W，...）</span><br/>
         </div>
+
         <Button name={"✅ 确认添加"} onClick={() => {
           // 判断输入是否合法
           let input_elems = document.querySelectorAll("#add-course-inputs > input");
@@ -314,6 +322,7 @@ function AddCourseModal(props) {
           const is_name_valid = name => (name.length > 0);
           const is_credit_valid = credit => (Number.isInteger(Number(credit)) && Number(credit) >= 1);
           const is_score_valid = isValidScore;
+
           // 如果合法, 则添加课程, 并关闭提示框
           if (is_year_valid(year) && is_which_valid(which) && is_name_valid(name) && is_credit_valid(credit) && is_score_valid(score)) {
             document.getElementById("add-course-error-msg").innerText = "";
@@ -329,12 +338,20 @@ function AddCourseModal(props) {
               teacher: "[自行添加的课程]"
             });
             props.closeModal();
+
+            // 更新下一次提示的默认值
+            console.log("更新提示的默认值~");
+            setHintName(random_course_name());
+            setHintCredit(random_credit());
+            setHintScore(random_score());
           }
           else {
             document.getElementById("add-course-error-msg").innerText = "⚠️ 输入内容有误, 请检查后重试~";
           }
         }}/>
+
         <Button name={"❌ 取消添加 (Esc)"} onClick={props.closeModal}/>
+        
         <span id={"add-course-error-msg"} style={{color: "#faa", textShadow: "0 0 0.5rem #faa4"}}>️ </span>
       </div>
     </div>
