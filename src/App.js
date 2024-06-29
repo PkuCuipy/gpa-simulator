@@ -20,7 +20,12 @@ import { seemsLikeToken, fetchCourseInfoAll } from "./utils/from-api.js";
 function TitleBar() {
   return (
     <div id={"title-bar"}>
-      GPA Simulator
+      <a href="https://github.com/PkuCuipy/gpa-simulator" target="_blank" rel="noreferrer" style={{display: "flex", color: "white", textDecoration: "none"}}>
+      GPA Simulator &nbsp;
+      <svg fill="#eee" height="32" viewBox="0 0 16 16" version="1.1" width="25" style={{transform: "translateY(-0.15rem)"}}>
+        <path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path>
+      </svg>
+      </a>
     </div>
   );
 }
@@ -31,7 +36,9 @@ function BottomBar() {
     <div id={"bottom-bar"}>
       <div> ️⚠︎ 本页面结果仅供参考, 请以学校官方结果为准! </div>
       <div> 绩点公式: GPA(x) = 4 - 3(100 - x)² / 1600 </div>
-      <div> ️基于 GPLv3 协议在 <a href="https://github.com/PkuCuipy/gpa-simulator" style={{color: "inherit"}} target="_blank" rel="noreferrer"> GitHub</a> 开源 </div>
+      <div> ️
+        本项目在 <a href="https://github.com/PkuCuipy/gpa-simulator" style={{color: "inherit"}} target="_blank" rel="noreferrer"> GitHub</a> 开放源代码
+      </div>
       <div style={{textAlign: "right"}}>访问量统计: <img style={{verticalAlign: "middle"}} class="statcounter" src="https://c.statcounter.com/13010450/0/356f82fc/0/" alt="Web Analytics" referrerPolicy="no-referrer-when-downgrade"></img></div>
     </div>
   );
@@ -47,7 +54,7 @@ function Settings(props) {
       <Button name={"随机生成成绩单 (F3)"} icon={random_icon} onClick={props.onRandomGenerate}/>
     </div>
     <div style={{textAlign: "center", color: "gold", fontSize: "0.95rem", textShadow: "0 0 0.2rem #33bbcc55"}}>
-      <strong>提示：“修改成绩” 请点击每行右侧的成绩数字，即可进行编辑</strong>
+      <strong>提示：“修改成绩” 点击每行右侧的成绩数字，即可编辑</strong>
     </div>
     </>
   )
@@ -66,36 +73,40 @@ function Button(props) {
 function Importer(props) {
   return (
     <div id={"importer"}>
-      <div id={"import-prompt"}>
-        <div style={{fontSize: "1.25rem", fontWeight: "Bold", marginTop: "0.5rem", marginBottom: "0.5rem", textShadow: "0 0 1rem white"}}> 开始使用 </div>
-          <div>
-            <strong>【方式一】</strong>
-            <button onClick={props.onRandomGenerate}> 🎲 点击这里 </button> <strong>随机生成</strong>一份成绩单
-          </div>
-          <div>
-            <strong>【方式二】</strong>
-            <button onClick={props.onCreateBlank}>➕新建成绩单</button> 创建一份空白成绩单
-          </div>
-          <div>
-            <strong>【方式三】导入官方成绩单：</strong>
-            访问北大树洞<a style={{textDecoration: "none", fontWeight: "Bold"}} href="https://treehole.pku.edu.cn/web/webscore" target="_blank" rel="noreferrer">
-            成绩查询页</a>，<strong>全选并复制整个页面</strong>，粘贴到下方：
-            <br/>
-            <strong>【无法复制？】</strong>
-            <div style={{paddingLeft: "0.8rem", fontSize: "1rem", lineHeight: "1.3rem"}}>
-              1. 请使用<strong>电脑端</strong>网页，其余设备作者未测试过。<br/>
-              2. 请刷新<strong>树洞成绩查询页</strong>后，再尝试全选复制。<br/>
-              3. 若仍无法复制，请尝试<strong>禁用</strong> <code>user-select: none</code>。
-            </div>
-          </div>
-          <div>
-            <strong>【2024/06 注】</strong><br/>
-            <div style={{paddingLeft: "0.8rem", fontSize: "1rem", lineHeight: "1.3rem"}}>
-              作者本人已从 P 大毕业，无权继续访问成绩查询页，因此无法保证本站对官方成绩单查询页的长期兼容。欢迎贡献<a href="https://github.com/PkuCuipy/gpa-simulator" target="_blank" rel="noreferrer">本仓库</a>，作者会尽己所能提供帮助。
-            </div>
-          </div>
+      <div className={"import-prompt"}>
+        <div style={{ fontSize: "1.25rem", fontWeight: "Bold", marginTop: "0.5rem", marginBottom: "0.3rem", textShadow: "0 0 1rem white" }}> 
+          开始使用 
+        </div>
+        <div>
+          <strong>【方式一】</strong>
+          <button onClick={props.onRandomGenerate}> 🎲 点击这里 </button> <strong>随机生成</strong>一份成绩单
+        </div>
+        <div>
+          <strong>【方式二】</strong>
+          <button onClick={props.onCreateBlank}>➕新建成绩单</button> 创建一份空白成绩单
+        </div>
+        <div>
+          <strong>【方式三】导入官方成绩单：</strong>
+          访问北大树洞<a style={{ textDecoration: "none", fontWeight: "Bold" }} href="https://treehole.pku.edu.cn/web/webscore" target="_blank" rel="noreferrer">成绩查询页</a>，<strong>全选并复制整个页面</strong>，粘贴到下方：
+        </div>
+        <div>
+          <strong>【无法复制？】</strong>
+          请使用<strong>电脑端</strong>网页，<strong>刷新树洞成绩查询页</strong>后，再尝试全选复制。
+        </div>
       </div>
-      <div id={"paste-here"} contentEditable={"true"} onInput={props.onPaste}>
+
+      <div id={"paste-here"} contentEditable={"true"} onInput={props.onPaste}></div>
+
+      <div className={"import-prompt"}>
+        <div style={{fontSize: "1.25rem", fontWeight: "Bold", marginTop: "0.2rem", marginBottom: "0.2rem", textShadow: "0 0 1rem white"}}> 
+          News
+        </div>
+        <div>
+          <strong>【2024/06】</strong>作者本人已从 P 大毕业，无权继续访问成绩查询页，因此无法保证本站对官方成绩单查询页的长期兼容。欢迎贡献<a href="https://github.com/PkuCuipy/gpa-simulator" target="_blank" rel="noreferrer">本仓库</a>，作者会尽己所能提供帮助。
+        </div>
+        <div>
+          <strong>【v2.0】</strong>支持新版树洞成绩单导入；移除基于旧版 PKU Helper API 的成绩单查询功能。
+        </div>
       </div>
     </div>
   );

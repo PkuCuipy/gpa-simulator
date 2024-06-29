@@ -44,8 +44,6 @@ button {
 
     color: #eee;
     background-color: #333;
-
-    margin-top: 3rem;
 }
 
 
@@ -76,9 +74,10 @@ button {
 }
 
 /* ------------------------------ 导入器 ------------------------------ */
-#import-prompt {
+.import-prompt {
     background-color: #ccc;
-    padding: 0.5rem 1.5rem;
+    padding: 0.5rem 1.0rem;
+    padding-bottom: 1rem;
     width: 90%;
     max-width: var(--max-width);
     margin: 1.5rem auto;    /* margin: auto 实现居中 */
@@ -86,10 +85,6 @@ button {
     box-sizing: border-box;
     box-shadow: 0 0 0.25rem white;
     line-height: 1.5rem;
-}
-#import-prompt ul {
-    padding: 0 1rem;
-    margin: 0;
 }
 #paste-here {
     background-color: #eee;
@@ -107,6 +102,11 @@ button {
     align-items: center;
     justify-content: center;
     max-width: var(--max-width);
+
+    @media (max-width: 500px) {
+        font-size: 2.3rem;
+        height: 12rem;
+    }
 }
 #paste-here:empty:before {      /* 实现 placeholder 的一种方式 */
     content: "粘贴到此处";
@@ -116,7 +116,7 @@ button {
 /* ------------------------------ 成绩单 ------------------------------ */
 #grade-book {
     margin: auto;
-    padding-top: 2rem;
+    padding-top: 1.3rem;
     padding-bottom: 1rem;
     border-radius: 5px;
     box-sizing: border-box;
