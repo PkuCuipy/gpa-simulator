@@ -29,6 +29,22 @@ button {
     margin: 2rem;
 }
 
+#title-bar a {
+    /* border: 1px solid #aaa; */
+    color: #eee;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 0.2rem 0.7rem;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition-duration: 0.2s;
+}
+#title-bar a:hover {
+    background-color: #555;
+}
+
 /* ------------------------------ 底栏 ------------------------------ */
 #bottom-bar {
     display: flex;
@@ -91,6 +107,12 @@ button {
     padding: 0.1rem 0.4rem;
     border-radius: 0.5rem;
     border: 1px solid #aaa;
+    background-color: #eee;
+
+    &:hover {
+        cursor: pointer;
+        background-color: #ddd;
+    }
 }
 #paste-here {
     background-color: #eee;
