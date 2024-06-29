@@ -126,6 +126,11 @@ function GradeBook(props) {
             key={info.semester}
           />
         )}
+        {semester_infos.length === 0 && 
+          <div id={"empty-grade-book"}> 
+            ⬆️ 请在上方添加您的第一门课程
+          </div>
+        }
       </div>
   );
 }
@@ -326,7 +331,7 @@ function AddCourseModal(props) {
           <strong>学期: </strong> <input defaultValue={hintWhich}/> <span className={"hint"}>（1, 2, 3）</span><br/>
           <strong>课名: </strong> <input defaultValue={hintName} key={hintName}/> <span className={"hint"}> </span><br/>
           <strong>学分: </strong> <input defaultValue={hintCredit} key={hintCredit}/> <span className={"hint"}>（≥ 1 的整数）</span><br/>
-          <strong>成绩: </strong> <input defaultValue={hintScore} key={hintScore}/> <span className={"hint"}>（如：59，84，P，W，...）</span><br/>
+          <strong>成绩: </strong> <input defaultValue={hintScore} key={hintScore}/> <span className={"hint"}>（如 59，84，P，W 等）</span><br/>
         </div>
 
         <Button name={"✅ 确认添加"} onClick={() => {
@@ -561,7 +566,7 @@ class App extends Component{
                        changeScoreOfCourse={this.changeScoreOfCourse}/>
             <Summary courseInfos={this.state.course_infos}/>
           </>}
-        <br/>
+        <div style={{display: "block", flex: 1}}/>  {/* Spacer */}
         <BottomBar/>
       </>
     );

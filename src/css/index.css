@@ -10,7 +10,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-@media (max-width: 450px) {
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 500px) {
   html {
     font-size: 0.9rem;
   }
