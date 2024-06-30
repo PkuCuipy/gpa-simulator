@@ -1,4 +1,5 @@
 import { nextUniqueId } from "./miscs";
+import { prefix_sampler, concept_sampler, connective_sampler, suffix_sampler } from "./course-name-sampler";
 
 // 随机生成整数 (min 和 max 都是 inclusive 的!)
 export function randint(min, max) {
@@ -8,7 +9,7 @@ export function randint(min, max) {
 }
 
 // 列表中随机选一个元素
-export function random_choice(list) {   // TODO: change to weighted random choice
+export function random_choice(list) { 
   return list[randint(0, list.length - 1)];
 }
 
@@ -19,27 +20,13 @@ export function random_credit() {
 
 // 随机生成课程名
 export function random_course_name() {
-  const prefixes = ["西方", "现代", "近代", "高级", "宏观", "学术", "高等", "计算", "工程", "大学", "应用", "公共",
-                    "普通", "国际", "新时代", "量子", "实用", "", "", "", "", "", "", "", "", "", "", ""];
-  const concepts = ["数学", "语言", "外国语", "物理", "化学", "生物", "医学", "计算", "信息", "电子",
-                    "法学", "哲学", "心理", "社会", "传播", "新闻", "历史", "考古", "摄影",
-                    "运筹", "天体", "地理", "光学", "系统", "机械", "电磁学", "农学", "游戏设计", "戏曲",
-                    "音乐", "太极拳", "生殖", "航空", "航天", "健美", "环境", "美术", "文化", "统计",
-                    "力学", "几何", "嵌入式", "硬件", "法语", "德语", "文学", "逻辑", "计算机", "数论", 
-                    "偏微分", "方程", "代数", "数理", "网络", "机器学习", "图像处理", "经济", 
-                    "文献", "发展", "道德", "法治", "数据", "半导体", "电影", "算法", "媒体",]
-  const connectives = ["与", "中的", "", ""]
-  const suffixes = ["概论", "基础", "导论", "实践", "(A)", "(B)", "(C)", "(实验班)", "(上)", "(下)", "理论",
-                    "设计", "分析", "方法", "研讨班", "通识", "实验", "研究", "原理", "赏析", "实习", "史",
-                    "专题", "精读", "设计与实现", "习题", "听说", "前沿", "", ""];
-
   // 生成模式: prefix concept (connective concept)? suffix
-  let prefix = random_choice(prefixes);
-  let concept = random_choice(concepts);
+  let prefix = prefix_sampler.next();
+  let concept = concept_sampler.next();
   let have_second = random_choice([true, false]);
-  let connective = have_second ? random_choice(connectives) : "";
-  let concept2 = have_second ? random_choice(concepts) : "";
-  let suffix = random_choice(suffixes);
+  let connective = have_second ? connective_sampler.next() : "";
+  let concept2 = have_second ? concept_sampler.next() : "";
+  let suffix = suffix_sampler.next();
   return "".concat(prefix, concept, connective, concept2, suffix);
 }
 
