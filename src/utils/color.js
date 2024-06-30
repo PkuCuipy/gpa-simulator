@@ -25,7 +25,7 @@ const HSL_F = {
 };
 
 
-export function score2hsl(score_str: String) {
+export function score2hsl(score_str) {
   /* H: [0, 360]  S: [0, 100]  L: [0, 100] */
   if (score_str === "F" || score_str === "NP") {
     return HSL_F;
@@ -47,7 +47,7 @@ export function score2hsl(score_str: String) {
   }
 }
 
-export function score2proportion(score_str: String) {
+export function score2proportion(score_str) {
   /* -> [0, 100] */
   let score = Number(score_str);
   if (score >= 60 && score <= 100) {

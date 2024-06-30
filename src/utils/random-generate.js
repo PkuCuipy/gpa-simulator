@@ -1,19 +1,19 @@
 import { nextUniqueId } from "./miscs";
 
 // 随机生成整数 (min 和 max 都是 inclusive 的!)
-export function randint(min: Int, max: Int) {
+export function randint(min, max) {
   let rand = Math.random();
   while (rand === 0 || rand === 1) {rand = Math.random();}
   return Math.floor((max - min + 1) * rand + min);
 }
 
 // 列表中随机选一个元素
-export function random_choice(list: Array) {
+export function random_choice(list) {
   return list[randint(0, list.length - 1)];
 }
 
 // 随机生成学分
-export function random_credit(): Number {
+export function random_credit() {
   return randint(1, 5);
 }
 

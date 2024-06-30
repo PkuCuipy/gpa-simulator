@@ -158,9 +158,9 @@ PKU Helper 成绩查询复刻增强版.
 
 **作者注：由于树洞改版，此部分信息已过时，请以构建版本的行为为准。**
 
-> - PKU Helper 从学校官方获取成绩单的 API 为:`https://pkuhelper.pku.edu.cn/api_xmcp/isop/scores?user_token=${token}`, 这里 `user_token` 是 PKU Helper 的通用验证 token, 可以从 [树洞](https://pkuhelper.pku.edu.cn/hole/) 中复制.
-> - 这个 API 是 `Access-Control-Allow-Origin: *` 的, 允许跨域, 因此可以直接使用 `XMLHttpRequest` 异步获取数据后再在回调函数中解析 JSON 即可.
-> - 见函数 `fetchCourseInfoAll()`.
+> - ~~PKU Helper 从学校官方获取成绩单的 API 为:`https://pkuhelper.pku.edu.cn/api_xmcp/isop/scores?user_token=${token}`, 这里 `user_token` 是 PKU Helper 的通用验证 token, 可以从 [树洞](https://pkuhelper.pku.edu.cn/hole/) 中复制.~~
+> - ~~这个 API 是 `Access-Control-Allow-Origin: *` 的, 允许跨域, 因此可以直接使用 `XMLHttpRequest` 异步获取数据后再在回调函数中解析 JSON 即可.~~
+> - ~~见函数 `fetchCourseInfoAll()`.~~
 >
 
 ### 基于 DOM 的成绩导入

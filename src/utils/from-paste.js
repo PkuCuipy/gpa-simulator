@@ -27,18 +27,12 @@ export function parseCourseInfoAll(DOMElem) {
     let course_rows = block.getElementsByClassName("course-row");
     for (let row of course_rows) {
       let name = getDOMChild(row, [0,1,0,0,0]).innerText;
-      // console.log("name", name);
       let semester = semester_name.match(/(\d+)学年 第(\d+)学期/).slice(1, 3).map(Number);     // "19学年 第2学期" --> [19, 2]
       let credit = Number(getDOMChild(row, [0,0,0,0]).innerText);
-      // console.log("credit", credit);
       let score = getDOMChild(row, [0,2,0,0]).innerText.trim();
-      // console.log("score", score);
       let type_teacher = getDOMChild(row, [0,1,0,1]).innerText.split("-");
-      // console.log("type_teacher", type_teacher);
       let type = type_teacher[0].trim();
-      // console.log("type", type);
       let teacher = type_teacher[1].trim();
-      // console.log("teacher", teacher);
       let course_info = {
         is_user_created: false,
         unique_id: nextUniqueId(),

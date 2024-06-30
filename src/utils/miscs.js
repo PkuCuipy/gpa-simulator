@@ -5,16 +5,7 @@ export const nextUniqueId = (() => {
   }
 })();
 
-export function normalize_score_from_isop(score) {
-  /*** Copied from PKU-Helper source file `score_parser.js` ***/
-  if(score==='合格') return 'P';
-  else if(score==='不合格') return 'NP';
-  else if(score==='缓考') return 'I';
-  else if(score==='免修') return 'EX';
-  else return score;
-}
-
-export function isValidScore(score: String) {
+export function isValidScore(score) {   // score: String
   return ((new Set(["P", "F", "W", "NP", "I", "EX", "DEL"])).has(score) || (score !== "" && Number(score) >= 0 && Number(score) <= 100));
 }
 
@@ -58,7 +49,7 @@ export function gpa2score(gpa) {
   return 100 - Math.sqrt((6400 - 1600 * gpa) / 3);
 }
 
-export function score2gpa_printable(score: String) {
+export function score2gpa_printable(score) {  // score: String
   if (score === "P") { return "通过"}
   else if (score === "F") { return "未通过"}
   else if (score === "W") { return "退课"}

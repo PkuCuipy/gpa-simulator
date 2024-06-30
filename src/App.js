@@ -13,7 +13,6 @@ import {
   random_score,
   nowSemester
 } from "./utils/random-generate.js";
-import { seemsLikeToken, fetchCourseInfoAll } from "./utils/from-api.js";
 
 
 /* ------------------------------ 顶栏 ------------------------------ */
@@ -396,22 +395,6 @@ class App extends Component{
   }
 
   componentDidMount() {
-
-    // 如果检测到 localStorage 中有 user_token, 则按照这个加载数据
-    const local_saved_token = localStorage.getItem("user_token");
-    if (local_saved_token !== null) {
-      localStorage.removeItem("user_token");
-      fetchCourseInfoAll(local_saved_token, (infos) => {
-        if (window.confirm("检测到您上次的 token 信息, 是否以此身份继续?")) {
-          this.setState({
-            course_infos: infos,
-            need_initial_import: false,
-          });
-          localStorage.setItem("user_token", local_saved_token);
-        }
-      });
-    }
-
     /* 点击其它地方时关闭 Modal */
     const modal = document.getElementsByClassName("modal")[0];
     window.onclick = event => {
@@ -504,23 +487,7 @@ class App extends Component{
   handlePaste = (evt) => {
     console.log("用户粘贴了一些东西, 来看看能不能解析?");
     let elem = evt.target;              // 这个理应就是 #paste-here
-                                        // 判断 ｢导入方式｣
-
-    const inner_text = elem.innerText.trim();
-    if (false &&  // fixme: qy 树洞已经不存在以前 PKU Helper 时代的 token 了，新的 token 规则本人并不知晓。——2024-06-22 注
-      seemsLikeToken(inner_text)) { // 1. 粘贴的是 ｢token｣ 类似物
-      const token = inner_text;
-      fetchCourseInfoAll(token, (infos) => {
-        console.log("utils:", infos);
-        console.log("gpa:", calcAvgGPA(infos));
-        this.setState({
-          course_infos: infos,
-          need_initial_import: false,
-        });
-        localStorage.setItem("user_token", token);     // 存储用户的 token, 下次如果检测到 localStorage 中有, 就不必再向用户询问
-      });
-    }
-    else if (seemsByPageCopy(elem)) {   // 2. 粘贴的是 ｢成绩查询页面｣ 类似物
+    if (seemsByPageCopy(elem)) {   // 如果粘贴的是 ｢成绩查询页面｣ 类似物
       let infos = parseCourseInfoAll(elem);
       console.log("utils:", infos);
       console.log("gpa:", calcAvgGPA(infos));
