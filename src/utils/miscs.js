@@ -15,7 +15,7 @@ export function normalize_score_from_isop(score) {
 }
 
 export function isValidScore(score: String) {
-  return ((new Set(["P", "F", "W", "NP", "I", "EX"])).has(score) || (score !== "" && Number(score) >= 0 && Number(score) <= 100));
+  return ((new Set(["P", "F", "W", "NP", "I", "EX", "DEL"])).has(score) || (score !== "" && Number(score) >= 0 && Number(score) <= 100));
 }
 
 export function calcAvgGPA(course_infos) {

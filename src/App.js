@@ -226,7 +226,7 @@ function CourseRow(props) {
           suppressContentEditableWarning={true}
           onBlur={
             (event) => {    /* 注意这里得用 onBlur 而不是 onFocusout! */
-              let new_score = event.target.innerText.trim();
+              let new_score = event.target.innerText.trim().toUpperCase();
               event.target.innerText = new_score;
               if (isValidScore(new_score)) {
                 props.changeScoreOfCourse(props.courseInfo.unique_id, new_score);
@@ -240,7 +240,8 @@ function CourseRow(props) {
             (event) => {
               if (event.key.toLowerCase() === "enter") {
                 event.preventDefault();       /* 这是 React 阻止事件默认行为的写法. (常规写法 return false 是不行的!!!) */
-                let new_score = event.target.innerText.trim();    /* 以下完全照搬 onBlur 的事件处理 */
+                /* 以下完全照搬 onBlur 的事件处理 */
+                let new_score = event.target.innerText.trim().toUpperCase();    
                 event.target.innerText = new_score;
                 if (isValidScore(new_score)) {
                   props.changeScoreOfCourse(props.courseInfo.unique_id, new_score);
@@ -534,9 +535,15 @@ class App extends Component{
     console.log("用户粘贴的内容已清空~");
   }
 
-  /* 把 unique_id 为 ui 的 course 的成绩设置为 new_score */
+  /* 把 unique_id 为 ui 的 course 的成绩设置为 new_score, 如果新成绩是 "DEL", 则移除这门课 */
   changeScoreOfCourse = (ui, new_score) => {
     let infos =  this.state.course_infos;
+
+    if (new_score === "DEL") {  // 如果新成绩是 "DEL", 则移除这门课
+      this.setState({course_infos: infos.filter(i => i.unique_id !== ui)});
+      return; 
+    }
+    
     let that_info = infos.filter(i => i.unique_id === ui)[0];
     that_info.score = new_score;
     this.setState({
