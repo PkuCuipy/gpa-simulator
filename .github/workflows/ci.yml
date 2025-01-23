@@ -27,11 +27,3 @@ jobs:
       
     - name: Run tests
       run: npm test
-      
-    - name: Upload coverage reports
-      uses: codecov/codecov-action@v5
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        files: ./coverage/lcov.info
-        flags: unittests
-        fail_ci_if_error: true 
