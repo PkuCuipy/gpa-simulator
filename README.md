@@ -1,14 +1,15 @@
-## GPA Simulator (绩点模拟器, GS)
+# GPA Simulator - 绩点模拟器
 
-北大 PKU Helper 成绩查询页**复刻增强**版.
+[![CI](https://github.com/PKUCuipy/gpa-simulator/actions/workflows/ci.yml/badge.svg)](https://github.com/PKUCuipy/gpa-simulator/actions/workflows/ci.yml)
+[![commit](https://img.shields.io/github/last-commit/pkucuipy/gpa-simulator)](https://github.com/pkucuipy/gpa-simulator/commits/master)
+[![License](https://img.shields.io/github/license/PKUCuipy/gpa-simulator)](https://github.com/PKUCuipy/gpa-simulator/blob/master/LICENSE)
 
-- `GS` (即 GPA Simulator, 下同) **复刻**了原 [~~PKU Helper 成绩查询页~~](https://pkuhelper.pku.edu.cn/my_score/) (*注: 随 2023 年初树洞改版, 该页面已失效*) 的基本功能, 并**增强**其成绩模拟的能力, 包括新增课程、往期绩点回溯等功能.
+北大 PKU Helper 成绩查询页**复刻增强**版. 访问链接: [GPA 模拟器](https://pkucuipy.github.io/gpa-simulator)
 
-## 快速链接: [在线 GPA 模拟器](https://pkucuipy.github.io/gpa-simulator)
+本项目 (GPA Simulator, 以下简称 `GS`) **复刻**了原 [~~PKU Helper 成绩查询页~~](https://pkuhelper.pku.edu.cn/my_score/) (*注: 随 2023 年初树洞改版, 该页面已失效*) 的基本功能, 并**增强**其成绩模拟的能力, 包括新增课程、往期绩点回溯等功能.
 
-## 用户手册
 
-> **作者注：由于树洞改版，部分信息已过时，请以构建版本的行为为准。**
+## 用户手册 - User Manual
 
 ### 成绩导入
 
@@ -17,8 +18,6 @@
 - 在方式一中, `GS` 会**随机生成**一份成绩单, 其中的课程名、成绩等均是随机生成的.
 - 在方式二中, `GS` 会创建一份空白成绩单, 用户可以手动添加课程.
 - 在方式三中, `GS` 会解析用户粘贴的网页的 `DOM` 结构, 从中解析出每门课程的数据.
-
->   若仅作功能体验, 请以 ｢**方式一**｣ 继续.
 
 ### 成绩渲染
 
@@ -75,9 +74,8 @@
 也可以将成绩设置为 `W`，使其不参与 GPA 计算。
 
 ---
----
 
-## 开发者手册
+## 开发者文档 - Developer Documentation
 
 源码结构如下, 文件主要功能如右侧标注:
 
@@ -155,10 +153,9 @@
 }
 ```
 
-### 基于 User Token 的成绩导入
+### ~~基于 User Token 的成绩导入~~ (Deprecated)
 
-**注：由于树洞改版，此导入方式已失效，该功能在最新的 GS 版本中已被移除。**
-
+> **注：由于树洞改版，此导入方式已失效，该功能在最新的 GS 版本中已被移除。**
 > - ~~PKU Helper 从学校官方获取成绩单的 API 为:`https://pkuhelper.pku.edu.cn/api_xmcp/isop/scores?user_token=${token}`, 这里 `user_token` 是 PKU Helper 的通用验证 token, 可以从 [树洞](https://pkuhelper.pku.edu.cn/hole/) 中复制.~~
 > - ~~这个 API 是 `Access-Control-Allow-Origin: *` 的, 允许跨域, 因此可以直接使用 `XMLHttpRequest` 异步获取数据后再在回调函数中解析 JSON 即可.~~
 > - ~~见函数 `fetchCourseInfoAll()`.~~
