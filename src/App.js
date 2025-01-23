@@ -38,7 +38,7 @@ function BottomBar() {
       <div> ️
         本项目在 <a href="https://github.com/PkuCuipy/gpa-simulator" style={{color: "inherit"}} target="_blank" rel="noreferrer"> GitHub</a> 开放源代码
       </div>
-      <div style={{textAlign: "right"}}>访问量统计: <img style={{verticalAlign: "middle"}} class="statcounter" src="https://c.statcounter.com/13010450/0/356f82fc/0/" alt="Web Analytics" referrerPolicy="no-referrer-when-downgrade"></img></div>
+      <div style={{textAlign: "right"}}>访问量统计: <img style={{verticalAlign: "middle"}} className="statcounter" src="https://c.statcounter.com/13010450/0/356f82fc/0/" alt="Web Analytics" referrerPolicy="no-referrer-when-downgrade"></img></div>
     </div>
   );
 }
