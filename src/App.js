@@ -33,7 +33,7 @@ function TitleBar() {
 function BottomBar() {
   return (
     <div id={"bottom-bar"}>
-      <div> ️⚠︎ 本页面结果仅供参考, 请以学校官方结果为准! </div>
+      <div> ️⚠︎ 本页面结果仅供参考, 1111请以学校官方结果为准! </div>
       <div> 绩点公式: GPA(x) = 4 - 3(100 - x)² / 1600 </div>
       <div> ️
         本项目在 <a href="https://github.com/PkuCuipy/gpa-simulator" style={{color: "inherit"}} target="_blank" rel="noreferrer"> GitHub</a> 开放源代码

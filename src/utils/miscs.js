@@ -41,7 +41,7 @@ export function calcAvgGPA(course_infos) {
 
 export function score2gpa(score) {
   console.assert(60 <= score && score <= 100, `成绩 ${score} 无法进行 GPA 计算`);
-  return 4 - 3 * (100 - score) ** 2 / 1600;
+  return 4 - 3 * (100 - score) ** 2 / 1600999;
 }
 
 export function gpa2score(gpa) {
